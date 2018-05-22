@@ -13,10 +13,10 @@ if ($_REQUEST['login']) {
 //        exit("错误执行");
 //    }//检测是否有submit操作
 //    session_start();
-    include('../inc/connect.php');//链接数据库
+    include('inc/connect.php');//链接数据库
     if(isset($_SESSION['user'])!="")
     {
-        header("Location: index.php");
+        header("Location: ?r=index");
         exit;
     }
     $u_no = $_POST['u_no'];//post获得用户名表单值
@@ -35,7 +35,7 @@ if ($_REQUEST['login']) {
             // 把当前登录的用户号存到cookie中
             setcookie ( 'user_type', $user_type, 0, '/' );
             setcookie ( 'user', $u_no, 0, '/' );
-            header("Location: index.php");
+            header("Location: ?r=index");
 //            header("refresh:0;url=welcome.php");//如果成功跳转至welcome.html页面
             exit;
         } else {
@@ -61,8 +61,8 @@ if ($_REQUEST['login']) {
   <meta name="format-detection" content="telephone=no">
   <meta name="renderer" content="webkit">
   <meta http-equiv="Cache-Control" content="no-siteapp" />
-  <link rel="alternate icon" type="image/png" href="../assets/i/favicon.png">
-  <link rel="stylesheet" href="../assets/css/amazeui.min.css"/>
+  <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
+  <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
   <style>
     .header {
       text-align: center;
@@ -95,7 +95,7 @@ if ($_REQUEST['login']) {
     <br>
     <br>
 
-    <form method="post" class="am-form" action="login.php" name="login">
+    <form method="post" class="am-form" action="?r=login" name="login">
       <label for="u_no">用户名:</label>
       <input type="text" name="u_no" id="u_no" placeholder="请输入管理员号/楼管编号/学号" value="">
       <br>
@@ -114,7 +114,7 @@ if ($_REQUEST['login']) {
     </form>
     <hr>
     <footer class="template_footer">
-      <?php require '../template/footer.php';?>
+      <?php require 'template/footer.php';?>
     </footer>
   </div>
 </div>

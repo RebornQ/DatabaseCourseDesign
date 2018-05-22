@@ -16,7 +16,7 @@ $user_type = $_COOKIE ['user_type'];
 // 判断是否 登录
 if ($user == "") {
     // 重定向页面到 登录页面
-    header ( "Location: login.php" );
+    header ( "Location: ?r=login" );
     exit ();
 } else {
     $query = "SELECT * FROM users WHERE u_no='$user'";

@@ -23,8 +23,8 @@
                 <span class="am-icon-users"></span> <?php echo $username ?> <span class="am-icon-caret-down"></span>
             </a>
             <ul class="am-dropdown-content">
-                <li><a href='../pages/user.php'><span class="am-icon-user"></span> 资料</a></li>
-                <li><a href="../pages/outlogin.php"><span class="am-icon-power-off"></span> 退出</a></li>
+                <li><a href='?r=user'><span class="am-icon-user"></span> 资料</a></li>
+                <li><a href="?r=outlogin"><span class="am-icon-power-off"></span> 退出</a></li>
             </ul>
         </li>
         <li class="am-hide-sm-only"><a href="javascript:;" id="admin-fullscreen"><span class="am-icon-arrows-alt"></span> <span class="admin-fullText">开启全屏</span></a></li>

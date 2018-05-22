@@ -1,6 +1,6 @@
 <?php
-require '../inc/connect.php';//链接数据库
-require '../inc/checklogin.php';
+require 'inc/connect.php';//链接数据库
+require 'inc/checklogin.php';
 
 ?>
 
@@ -15,11 +15,11 @@ require '../inc/checklogin.php';
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="renderer" content="webkit">
   <meta http-equiv="Cache-Control" content="no-siteapp" />
-  <link rel="icon" type="image/png" href="../assets/i/favicon.png">
-  <link rel="apple-touch-icon-precomposed" href="../assets/i/app-icon72x72@2x.png">
+  <link rel="icon" type="image/png" href="assets/i/favicon.png">
+  <link rel="apple-touch-icon-precomposed" href="assets/i/app-icon72x72@2x.png">
   <meta name="apple-mobile-web-app-title" content="Amaze UI" />
-  <link rel="stylesheet" href="../assets/css/amazeui.min.css"/>
-  <link rel="stylesheet" href="../assets/css/admin.css">
+  <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
+  <link rel="stylesheet" href="assets/css/admin.css">
 </head>
 <body>
 <!--[if lte IE 9]>
@@ -29,13 +29,13 @@ require '../inc/checklogin.php';
 
 <!-- header start -->
 <header class="am-topbar am-topbar-inverse admin-header">
-    <?php require '../template/header.php'; ?>
+    <?php require 'template/header.php'; ?>
 </header>
 <!-- header end -->
 
 <div class="am-cf admin-main">
     <!-- sidebar start -->
-    <?php require '../template/sidebar.php'; ?>
+    <?php require 'template/sidebar.php'; ?>
     <!-- sidebar end -->
 
   <!-- content start -->
@@ -71,7 +71,7 @@ require '../inc/checklogin.php';
     </div>
 
     <footer class="admin-content-footer">
-        <?php require '../template/footer.php'; ?>
+        <?php require 'template/footer.php'; ?>
     </footer>
   </div>
   <!-- content end -->
@@ -81,19 +81,19 @@ require '../inc/checklogin.php';
 <a href="#" class="am-icon-btn am-icon-th-list am-show-sm-only admin-menu" data-am-offcanvas="{target: '#admin-offcanvas'}"></a>
 
 <footer>
-    <?php require '../template/footer.php'; ?>
+    <?php require 'template/footer.php'; ?>
 </footer>
 
 <!--[if lt IE 9]>
 <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
 <script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
-<script src="../assets/js/amazeui.ie8polyfill.min.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
 <![endif]-->
 
 <!--[if (gte IE 9)|!(IE)]><!-->
-<script src="../assets/js/jquery.min.js"></script>
+<script src="assets/js/jquery.min.js"></script>
 <!--<![endif]-->
-<script src="../assets/js/amazeui.min.js"></script>
-<script src="../assets/js/app.js"></script>
+<script src="assets/js/amazeui.min.js"></script>
+<script src="assets/js/app.js"></script>
 </body>
 </html>
