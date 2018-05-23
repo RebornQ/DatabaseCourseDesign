@@ -23,7 +23,21 @@
                 <span class="am-icon-users"></span> <?php echo $username ?> <span class="am-icon-caret-down"></span>
             </a>
             <ul class="am-dropdown-content">
-                <li><a href='?r=user'><span class="am-icon-user"></span> 资料</a></li>
+                <?php
+                // 判断 用户权限，以设置显示的不同页面
+                switch ($user_permission) {
+                    case 0 :
+                        $data_href = "?r=user-admin_super&uno={$users['u_no']}";
+                        break;
+                    case 1 :
+                        $data_href = "?r=user-admin_normal&uno={$users['u_no']}";
+                        break;
+                    case -1 :
+                        $data_href = "?r=user-stu&uno={$users['u_no']}&edit_target=self";
+                        break;
+                }
+                ?>
+                <li><a href='<?php echo $data_href?>'><span class="am-icon-user"></span> 资料</a></li>
                 <li><a href="?r=outlogin"><span class="am-icon-power-off"></span> 退出</a></li>
             </ul>
         </li>

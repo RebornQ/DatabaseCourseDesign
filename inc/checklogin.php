@@ -8,7 +8,7 @@
 
 // 获得 登录 所存放的cookie值
 $user = $_COOKIE ['user'];
-$user_type = $_COOKIE ['user_type'];
+$user_permission = $_COOKIE ['user_permission'];
 //session_start();
 //$user = $_SESSION['user'];
 //$user_type = $_SESSION ['user_type'];
@@ -24,7 +24,7 @@ if ($user == "") {
     $users = mysql_fetch_array ( $result );
 //    $username = "管理员：" . $users ['u_name'];
     // 查到用户的个人信息，以备使用
-    switch ($user_type) {
+    switch ($user_permission) {
         case 0 :
 //            $query = "SELECT * FROM users WHERE u_no='$user'";
 //            $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () );

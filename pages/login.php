@@ -14,7 +14,7 @@ if ($_REQUEST['login']) {
 //    }//检测是否有submit操作
 //    session_start();
     include('inc/connect.php');//链接数据库
-    if(isset($_SESSION['user'])!="")
+    if(isset($_COOKIE['user'])!="")
     {
         header("Location: ?r=index");
         exit;
@@ -30,10 +30,10 @@ if ($_REQUEST['login']) {
         $rows = mysql_num_rows($result);//返回一个数值
         //todo 要对rows做判断再执行下面
         $users = mysql_fetch_array ( $result );
-        $user_type = $users['u_permission'];
+        $user_permission = $users['u_permission'];
         if ($rows) {//0 false 1 true
             // 把当前登录的用户号存到cookie中
-            setcookie ( 'user_type', $user_type, 0, '/' );
+            setcookie ( 'user_permission', $user_permission, 0, '/' );
             setcookie ( 'user', $u_no, 0, '/' );
             header("Location: ?r=index");
 //            header("refresh:0;url=welcome.php");//如果成功跳转至welcome.html页面

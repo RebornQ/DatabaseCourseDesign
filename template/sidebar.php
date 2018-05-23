@@ -19,7 +19,7 @@ $normal_admins_count = mysql_num_rows($normal_admin_result);
 // 查询所有学生记录
 $student_query = "SELECT * FROM users WHERE u_permission=-1 ORDER BY u_id DESC";
 $student_result = mysql_query($student_query) or die ('SQL语句有误：' . mysql_error());
-$students_count = mysql_num_rows($result);
+$students_count = mysql_num_rows($student_result);
 
 ?>
 <div class="admin-sidebar am-offcanvas" id="admin-offcanvas">
@@ -27,9 +27,23 @@ $students_count = mysql_num_rows($result);
 
         <ul class="am-list admin-sidebar-list">
             <li><a href="?r=index"><span class="am-icon-home"></span> 首页</a></li>
-            <li><a href="?r=user" class="am-cf"><span class="am-icon-check"></span> 个人资料<span
+            <?php
+            // 判断 用户权限，以设置显示的不同页面
+            switch ($user_permission) {
+                case 0 :
+                    $data_href = "?r=user-admin_super&uno={$users['u_no']}";
+                    break;
+                case 1 :
+                    $data_href = "?r=user-admin_normal&uno={$users['u_no']}";
+                    break;
+                case -1 :
+                    $data_href = "?r=user-stu&uno={$users['u_no']}&edit_target=self";
+                    break;
+            }
+            ?>
+            <li><a href="<?php echo $data_href ?>" class="am-cf"><span class="am-icon-check"></span> 个人资料<span
                             class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a></li>
-            <li class="admin-parent">
+            <li class="admin-parent" <?php if ($user_permission == -1) echo 'style="display: none;"' ?>>
                 <a class="am-cf" data-am-collapse="{target: '#object-nav'}"><span class="am-icon-user-secret"></span>
                     对象管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
                 <ul class="am-list am-collapse admin-sidebar-sub am-in" id="object-nav">
@@ -44,7 +58,7 @@ $students_count = mysql_num_rows($result);
                     </li>
                 </ul>
             </li>
-            <li class="admin-parent">
+            <li class="admin-parent" <?php if ($user_permission == -1) echo 'style="display: none;"' ?>>
                 <a class="am-cf" data-am-collapse="{target: '#dormitory-nav'}"><span class="am-icon-calendar"></span>
                     宿舍管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
                 <ul class="am-list am-collapse admin-sidebar-sub am-in" id="dormitory-nav">

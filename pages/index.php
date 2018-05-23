@@ -63,7 +63,7 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
             </ul>
 
             <div class="am-g">
-                <div class="am-u-sm-12">
+                <div class="am-u-sm-12" <?php if ($user_permission == -1) echo 'style="display: none;"' ?>>
                     <table class="am-table am-table-bd am-table-striped admin-content-table">
                         <thead>
                         <tr>
@@ -113,7 +113,7 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
                             <tr>
 <!--                                <td>--><?php //echo $students['s_id']?><!--</td>-->
                                 <td><?php echo $students['s_no']?></td>
-                                <td><a href="#"><?php echo $students['u_name']?></a></td>
+                                <td><a href="?r=user-stu&sno=<?php echo $students['s_no']?>"><?php echo $students['u_name']?></a></td>
                                 <td><?php echo $students['s_sex']?></td>
                                 <td><?php echo $students['s_age']?></td>
                                 <td><span class="am-badge am-badge-success"><?php echo $students['s_department']?></span></td>
