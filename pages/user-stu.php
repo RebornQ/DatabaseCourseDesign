@@ -1,6 +1,7 @@
 <?php
 require 'inc/connect.php';//链接数据库
 require 'inc/checklogin.php';
+include 'tools/tool_database.php';
 
 $edit_target = $_GET['edit_target'];
 $sno = $_GET['sno'];
@@ -60,10 +61,18 @@ $users_stu_current_dor_result = mysql_query($users_stu_current_dor_query) or die
 $users_stu_current_dor = mysql_fetch_array($users_stu_current_dor_result);
 //$users_stu_current_dor_name = $users_stu_current_dor_name['d_name'];
 
+// 查询 所有的宿舍楼名
+$users_all_dor_builds_query = "SELECT db_name FROM dormitory_builds ORDER BY db_id";
+$users_all_dor_builds_result = mysql_query($users_all_dor_builds_query) or die ('SQL语句有误：' . mysql_error());
+//$users_all_dor_builds = mysql_fetch_array($users_all_dor_builds_result);
+
+
 $save = $_POST['save'];
 $u_no = $_POST['user-no'];
 $u_name = $_POST['user-name'];
 $u_password = $_POST['user-password'];
+$u_password_new = $_POST['user-password-new'];
+$u_password_repeat = $_POST['user-password-repeat'];
 $stu_sex = $_POST['user-sex'];
 $stu_age = $_POST['user-age'];
 $stu_department = $_POST['user-department'];
@@ -72,9 +81,10 @@ $stu_phone = $_POST['user-phone'];
 $stu_dor_build = $_POST['user-dor-build'];
 $stu_dor = $_POST['user-dor'];
 $stu_bed = $_POST['user-bed'];
+$stu_dor_build_id = queryDorBuildIdByName($stu_dor_build);
 /* 修改 信息 */
 if ($save != "") {
-//    echo "<script>alert($u_name)</script>";
+
     // 超级管理员权限
     if ($user_permission == 0) {
         if ($u_name == "") {
@@ -109,7 +119,7 @@ if ($save != "") {
 
     // 超管 和 普管 可更换学生床位宿舍
     if ($user_permission != -1) {
-        $dor_details_now = mysql_fetch_array(mysql_query("SELECT d_id,d_stu_num_now,d_bed_num FROM dormitories WHERE d_name='$stu_dor' AND db_id='{$user_stu_current_dor_build['db_id']}'"));//查询 目标宿舍楼该宿舍的id和床位数以及当前已入住人数
+        $dor_details_now = mysql_fetch_array(mysql_query("SELECT d_id,d_stu_num_now,d_bed_num FROM dormitories WHERE d_name='$stu_dor' AND db_id='$stu_dor_build_id'"));//查询 目标宿舍楼该宿舍的id和床位数以及当前已入住人数
         $result_bed_details_now = mysql_query("SELECT s_no FROM students WHERE s_bed='$stu_bed' AND d_id='{$dor_details_now['d_id']}'");// 查询 睡目标宿舍该床的同学的学号（判断是否已有人）
         $bed_details_now = mysql_fetch_array($result_bed_details_now);
         if (mysql_num_rows($result_bed_details_now) != 0) {// 若存在，即床已有人睡，则与学生间互换宿舍
@@ -121,11 +131,11 @@ if ($save != "") {
             exit ();
         } else {
             mysql_query("UPDATE students SET s_bed='$stu_bed',d_id='{$dor_details_now['d_id']}' WHERE s_no='{$users_stu['s_no']}'");
-            if ($stu_dor != $users_stu_current_dor ['d_name']) {
-                $temp = $users_stu_current_dor ['d_stu_num_now'] - 1;
-                mysql_query("UPDATE dormitories SET d_stu_num_now='$temp' WHERE d_id='{$users_stu['d_id']}'");
-                $temp = $dor_details_now ['d_stu_num_now'] + 1;
-                mysql_query("UPDATE dormitories SET d_stu_num_now='$temp' WHERE d_id='{$dor_details_now['d_id']}'");
+            if ($stu_dor != $users_stu_current_dor ['d_name'] || $stu_dor_build_id != $users_stu_current_dor['db_id']) {
+                $num_now_temp = $users_stu_current_dor ['d_stu_num_now'] - 1;
+                mysql_query("UPDATE dormitories SET d_stu_num_now='$num_now_temp' WHERE d_id='{$users_stu['d_id']}'");
+                $num_now_temp = $dor_details_now ['d_stu_num_now'] + 1;
+                mysql_query("UPDATE dormitories SET d_stu_num_now='$num_now_temp' WHERE d_id='{$dor_details_now['d_id']}'");
             }
 
 //            echo "<script>alert('学号 {$users_stu['s_no']} 已更换宿舍与床位！');location.href='?r=dorstu&db={$studor['db_no']}'</script>";
@@ -135,15 +145,28 @@ if ($save != "") {
     }
 
     // 学生更改密码
-    if ($user_permission == -1 && $u_password != "") {
-        mysql_query("UPDATE users SET u_password=md5($u_password) WHERE u_no='$sno'");
-        echo "<script>alert('密码更改成功！');location.href='?r=user-stu&sno=$sno'</script>";
+    if ($u_password != "" && $u_password_new != "" && $u_password_repeat != "") {
+        if (md5($u_password) != queryPasswordByUno($uno)) {
+            echo "<script>alert('登录密码错误！请重新输入！');history.back()</script>";
+            exit ();
+        }
+        if ($u_password_new != $u_password_repeat) {
+            echo "<script>alert('两次输入密码不一致！请重新输入！');history.back()</script>";
+            exit ();
+        }
+        if ($user_permission == -1) {
+            $passMD5Temp = md5($u_password_new);
+            mysql_query("UPDATE users SET u_password='$passMD5Temp' WHERE u_no='$uno'");
+//            echo "<script>alert('密码更改成功！请重新登录！');location.href='?r=user-stu&sno=$sno'</script>";
+            echo "<script>alert('密码更改成功！请重新登录！');location.href='?r=outlogin'</script>";
+            exit ();
+        }
+    } else {
+        echo "<script>alert('密码不能为空！请重新输入密码！');history.back()</script>";
         exit ();
     }
+
 }
-//else if ($_REQUEST['forget']) {
-//    echo "<script>alert('$u_no')</script>";
-//}
 ?>
 
 <!doctype html>
@@ -257,8 +280,23 @@ if ($save != "") {
                         <div class="am-form-group">
                             <label for="user-dor-build" class="am-u-sm-3 am-form-label">宿舍楼</label>
                             <div class="am-u-sm-9">
-                                <input type="text" id="user-dor-build" name="user-dor-build" placeholder="输入你所在的宿舍楼"
-                                       value="<?php echo $user_stu_current_dor_build['db_name'] ?>" <?php echo $permission_read ?>>
+                                <?php
+                                // 判断 用户权限，是否可编辑
+                                if ($user_permission == -1) {
+                                    echo "<select name='user-dor-build' disabled='disabled'>";
+                                } else {
+                                    echo "<select name='user-dor-build'>";
+                                }
+                                // 把 所有宿舍楼 遍历到数组中，输出
+                                while ($dor_builds = mysql_fetch_array($users_all_dor_builds_result)) {
+                                    if ($dor_builds['db_name'] == $user_stu_current_dor_build['db_name']) {
+                                        echo "<option value='{$dor_builds['db_name']}' selected='selected'>{$dor_builds['db_name']}</option>";
+                                    } else {
+                                        echo "<option value='{$dor_builds['db_name']}'>{$dor_builds['db_name']}</option>";
+                                    }
+                                }
+                                echo "</select>";
+                                ?>
                             </div>
                         </div>
 
@@ -314,7 +352,23 @@ if ($save != "") {
                             <label for="user-password" class="am-u-sm-3 am-form-label">登录密码</label>
                             <div class="am-u-sm-9">
                                 <input type="password" id="user-password" name="user-password"
+                                       placeholder="若修改密码，则直接输入你的登录密码；否则忽略该项不填">
+                            </div>
+                        </div>
+
+                        <div class="am-form-group" <?php if ($user_permission != -1) echo 'style="display: none;"' ?>>
+                            <label for="user-password-new" class="am-u-sm-3 am-form-label">新密码</label>
+                            <div class="am-u-sm-9">
+                                <input type="password" id="user-password-new" name="user-password-new"
                                        placeholder="若修改密码，则直接输入你的新密码；否则忽略该项不填">
+                            </div>
+                        </div>
+
+                        <div class="am-form-group" <?php if ($user_permission != -1) echo 'style="display: none;"' ?>>
+                            <label for="user-password-repeat" class="am-u-sm-3 am-form-label">确认密码</label>
+                            <div class="am-u-sm-9">
+                                <input type="password" id="user-password-repeat" name="user-password-repeat"
+                                       placeholder="若修改密码，则再次输入你的新密码；否则忽略该项不填">
                             </div>
                         </div>
 
