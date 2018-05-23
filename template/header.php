@@ -27,10 +27,10 @@
                 // 判断 用户权限，以设置显示的不同页面
                 switch ($user_permission) {
                     case 0 :
-                        $data_href = "?r=user-admin_super&uno={$users['u_no']}";
+                        $data_href = "?r=user-admin-super&uno={$users['u_no']}";
                         break;
                     case 1 :
-                        $data_href = "?r=user-admin_normal&uno={$users['u_no']}";
+                        $data_href = "?r=user-admin-normal&uno={$users['u_no']}";
                         break;
                     case -1 :
                         $data_href = "?r=user-stu&uno={$users['u_no']}&edit_target=self";

@@ -102,7 +102,7 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
                             <tr>
                                 <!--                                <td>--><?php //echo $normal_admins['u_id']?><!--</td>-->
                                 <td><?php echo $normal_admins['u_no']?></td>
-                                <td><a href="#"><?php echo $normal_admins['u_name']?></a></td>
+                                <td><a href="?r=user-admin-normal&uno=<?php echo $normal_admins['u_no']?>"><?php echo $normal_admins['u_name']?></a></td>
                             </tr>
                         <?php }?>
 

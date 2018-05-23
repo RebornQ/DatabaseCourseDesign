@@ -38,6 +38,8 @@ if ($user == "") {
 //            $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () );
 //            $users = mysql_fetch_array ( $result );
             $username = "普管 {$users ['u_name']}：" . $users ['u_no'];
+            $user_no = $users ['u_no'];
+            $user_name = $users ['u_name'];
             break;
         case -1 :
 //            $query = "SELECT * FROM students WHERE s_no='$user'";
