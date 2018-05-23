@@ -75,6 +75,7 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
                             <th>所在院系</th>
                             <th>年级</th>
                             <th>电话</th>
+                            <th>宿舍楼</th>
                             <th>宿舍号</th>
                             <th>床号</th>
                         </tr>
@@ -119,23 +120,19 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
                                 <td><span class="am-badge am-badge-success"><?php echo $students['s_department']?></span></td>
                                 <td><?php echo $students['s_grade']?></td>
                                 <td><?php echo $students['s_phone']?></td>
-                                <td><?php echo $students['d_id']?></td>
+                                <?php
+                                // 查询 当前学生所在的宿舍楼名
+                                $user_stu_current_dor_build_query = "SELECT dormitory_builds.db_name, dormitory_builds.db_id FROM dormitories,dormitory_builds WHERE dormitories.d_id='{$students['d_id']}' AND dormitories.db_id=dormitory_builds.db_id";
+                                $user_stu_current_dor_build_result = mysql_query($user_stu_current_dor_build_query) or die ('SQL语句有误：' . mysql_error());
+                                $user_stu_current_dor_build = mysql_fetch_array($user_stu_current_dor_build_result);
+                                // 查询 当前学生所在的宿舍号
+                                $users_stu_current_dor_query = "SELECT * FROM dormitories,dormitory_builds WHERE dormitories.d_id='{$students['d_id']}' AND dormitories.db_id=dormitory_builds.db_id";
+                                $users_stu_current_dor_result = mysql_query($users_stu_current_dor_query) or die ('SQL语句有误：' . mysql_error());
+                                $users_stu_current_dor = mysql_fetch_array($users_stu_current_dor_result);
+                                ?>
+                                <td><span class="am-badge am-badge-secondary"><?php echo $user_stu_current_dor_build['db_name']?></span></td>
+                                <td><?php echo $users_stu_current_dor['d_name']?></td>
                                 <td><?php echo $students['s_bed']?></td>
-<!--                                --><?php
-//                                // 查询 楼名 信息
-//                                $query_db_name = "SELECT db_name FROM dor_build WHERE db_no =ANY(SELECT db_no FROM dor WHERE d_id='{$students['d_id']}')";
-//                                $result_db_name = mysql_query ( $query_db_name ) or die ( 'SQL语句有误：' . mysql_error () );
-//                                $db_names = mysql_fetch_array ( $result_db_name );
-//                                ?>
-<!--                                <td><span class="am-badge am-badge-secondary">--><?php //echo $db_names['db_name']?><!--</span></td>-->
-<!--                                --><?php
-//                                // 查询 宿舍 信息
-//                                $query_d_no = "SELECT d_no FROM dor WHERE d_id='{$students['d_id']}'";
-//                                $result_d_no = mysql_query ( $query_d_no );
-//                                $d_no = mysql_fetch_array ( $result_d_no );
-//                                ?>
-<!--                                <td>--><?php //echo $d_no['d_no']?><!--</td>-->
-<!--                                <td>--><?php //echo $students['s_bed']?><!--</td>-->
                             </tr>
                         <?php }?>
                         </tbody>

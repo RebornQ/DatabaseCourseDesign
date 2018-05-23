@@ -13,7 +13,7 @@ if ($edit_target == "self") {
     if ($uno == "" || ($user_permission == -1 && $uno != $user_no)) {
         echo "<script>history.back()</script>";
     } else {
-        if ($user_permission == 0 || $user_permission == 1) {
+        if ($user_permission == 0) {
             $permission_read = "";
         }
     }
@@ -21,38 +21,44 @@ if ($edit_target == "self") {
     if ($sno == "" || ($user_permission == -1 && $sno != $user_no)) {
         echo "<script>history.back()</script>";
     } else {
-        if ($user_permission == 0 || $user_permission == 1) {
+        if ($user_permission == 0) {
             $permission_read = "";
         }
     }
 }
 
-$users_stu_query = "SELECT * FROM students WHERE s_no='$sno' ORDER BY s_id DESC";
+// 查询 当前用户的所有信息
+$users_stu_current_query = "SELECT * FROM students WHERE s_no='$sno' ORDER BY s_id DESC";
 if ($edit_target == 'self') {
-    $users_stu_query = "SELECT * FROM students WHERE s_no='$uno' ORDER BY s_id DESC";
+    $users_stu_current_query = "SELECT * FROM students WHERE s_no='$uno' ORDER BY s_id DESC";
 }
+$users_stu_current_result = mysql_query($users_stu_current_query) or die ('SQL语句有误：' . mysql_error());
+$users_stu_current = mysql_fetch_array($users_stu_current_result);
+//echo "<script>alert('{$users_stu_current['s_no']}');</script>";
+
+// 查询 学生的所有信息
+$users_stu_query = "SELECT * FROM students WHERE s_no='$sno' ORDER BY s_id DESC";
 $users_stu_result = mysql_query($users_stu_query) or die ('SQL语句有误：' . mysql_error());
 $users_stu = mysql_fetch_array($users_stu_result);
-//echo "<script>alert('$users_stu[s_no]');</script>";
 
 // 查询 当前学生名字
-$users_stu_name_query = "SELECT u_name FROM users WHERE u_no='{$users_stu['s_no']}' ORDER BY u_id DESC";
-$users_stu_name_result = mysql_query($users_stu_name_query) or die ('SQL语句有误：' . mysql_error());
-$users_stu_name = mysql_fetch_array($users_stu_name_result);
+$users_stu_current_name_query = "SELECT u_name FROM users WHERE u_no='{$users_stu_current['s_no']}' ORDER BY u_id DESC";
+$users_stu_current_name_result = mysql_query($users_stu_current_name_query) or die ('SQL语句有误：' . mysql_error());
+$users_stu_current_name_list = mysql_fetch_array($users_stu_current_name_result);
 
 // 查询 当前学生所在的宿舍楼名
-$user_stu_dor_build_query = "SELECT dormitory_builds.db_name, dormitory_builds.db_id FROM dormitories,dormitory_builds WHERE dormitories.d_id='{$users_stu['d_id']}' AND dormitories.db_id=dormitory_builds.db_id";
-$user_stu_dor_build_result = mysql_query($user_stu_dor_build_query) or die ('SQL语句有误：' . mysql_error());
-$user_stu_dor_build_name = mysql_fetch_array($user_stu_dor_build_result);
+$user_stu_current_dor_build_query = "SELECT dormitory_builds.db_name, dormitory_builds.db_id FROM dormitories,dormitory_builds WHERE dormitories.d_id='{$users_stu_current['d_id']}' AND dormitories.db_id=dormitory_builds.db_id";
+$user_stu_current_dor_build_result = mysql_query($user_stu_current_dor_build_query) or die ('SQL语句有误：' . mysql_error());
+$user_stu_current_dor_build = mysql_fetch_array($user_stu_current_dor_build_result);
 // 查询 该楼的所有宿舍号
-$dor_list_query = "SELECT d_name FROM dormitories WHERE db_id='{$user_stu_dor_build_name['db_id']}'";
+$dor_list_query = "SELECT d_name FROM dormitories WHERE db_id='{$user_stu_current_dor_build['db_id']}'";
 $dor_list_result = mysql_query($dor_list_query) or die ('SQL语句有误：' . mysql_error());
 //$dor_list = mysql_fetch_array ($dor_list_result);
 // 查询 当前学生所在的宿舍号
-$users_stu_dor_query = "SELECT dormitories.d_name,dormitories.d_bed_num FROM dormitories,dormitory_builds WHERE dormitories.d_id='{$users_stu['d_id']}' AND dormitories.db_id=dormitory_builds.db_id";
-$users_stu_dor_result = mysql_query($users_stu_dor_query) or die ('SQL语句有误：' . mysql_error());
-$users_stu_dor = mysql_fetch_array($users_stu_dor_result);
-//$users_stu_dor_name = $users_stu_dor_name['d_name'];
+$users_stu_current_dor_query = "SELECT * FROM dormitories,dormitory_builds WHERE dormitories.d_id='{$users_stu_current['d_id']}' AND dormitories.db_id=dormitory_builds.db_id";
+$users_stu_current_dor_result = mysql_query($users_stu_current_dor_query) or die ('SQL语句有误：' . mysql_error());
+$users_stu_current_dor = mysql_fetch_array($users_stu_current_dor_result);
+//$users_stu_current_dor_name = $users_stu_current_dor_name['d_name'];
 
 $save = $_POST['save'];
 $u_no = $_POST['user-no'];
@@ -103,25 +109,27 @@ if ($save != "") {
 
     // 超管 和 普管 可更换学生床位宿舍
     if ($user_permission != -1) {
-        $dors = mysql_fetch_array ( mysql_query ( "SELECT d_id,d_numnow FROM dor WHERE d_no='$stu_dor' AND db_no='{$studor['db_no']}'" ) );
-        $result_stu_nowbed = mysql_query ( "SELECT s_no FROM student WHERE s_bed='$stu_bed' AND d_id='{$dors['d_id']}'" );
-        $stu_nowbed = mysql_fetch_array ( $result_stu_nowbed );
-        if (mysql_num_rows ( $result_stu_nowbed ) != 0) {
-            mysql_query ( "UPDATE student SET s_bed='{$stu['s_bed']}',d_id='{$stu['d_id']}' WHERE s_no='{$stu_nowbed['s_no']}'" );
-            mysql_query ( "UPDATE student SET s_bed='$stu_bed',d_id='{$dors['d_id']}' WHERE s_no='{$stu['s_no']}'" );
+        $dor_details_now = mysql_fetch_array(mysql_query("SELECT d_id,d_stu_num_now,d_bed_num FROM dormitories WHERE d_name='$stu_dor' AND db_id='{$user_stu_current_dor_build['db_id']}'"));//查询 目标宿舍楼该宿舍的id和床位数以及当前已入住人数
+        $result_bed_details_now = mysql_query("SELECT s_no FROM students WHERE s_bed='$stu_bed' AND d_id='{$dor_details_now['d_id']}'");// 查询 睡目标宿舍该床的同学的学号（判断是否已有人）
+        $bed_details_now = mysql_fetch_array($result_bed_details_now);
+        if (mysql_num_rows($result_bed_details_now) != 0) {// 若存在，即床已有人睡，则与学生间互换宿舍
+            mysql_query("UPDATE students SET s_bed='{$users_stu['s_bed']}',d_id='{$users_stu['d_id']}' WHERE s_no='{$bed_details_now['s_no']}'");//先把自己的位置换给目标
+            mysql_query("UPDATE students SET s_bed='$stu_bed',d_id='{$dor_details_now['d_id']}' WHERE s_no='{$users_stu['s_no']}'");//目标位置换给自己
 
-            echo "<script>alert('学号 {$stu['s_no']} 与 {$stu_nowbed['s_no']} 已对换！');location.href='?r=dorstu&db={$studor['db_no']}'</script>";
+//            echo "<script>alert('学号 {$users_stu['s_no']} 与 {$bed_details_now['s_no']} 已互换宿舍！');location.href='?r=user-stu&db={$user_stu_current_dor_build['db_name']}'</script>";
+            echo "<script>alert('学号 {$users_stu['s_no']} 与 {$bed_details_now['s_no']} 已互换宿舍！');location.href='?r=user-stu&sno=$sno'</script>";
             exit ();
         } else {
-            mysql_query ( "UPDATE student SET s_bed='$stu_bed',d_id='{$dors['d_id']}' WHERE s_no='{$stu['s_no']}'" );
-            if ($stu_dor != $studor ['d_no']) {
-                $temp = $studor ['d_numnow'] - 1;
-                mysql_query ( "UPDATE dor SET d_numnow='$temp' WHERE d_id='{$stu['d_id']}'" );
-                $temp = $dors ['d_numnow'] + 1;
-                mysql_query ( "UPDATE dor SET d_numnow='$temp' WHERE d_id='{$dors['d_id']}'" );
+            mysql_query("UPDATE students SET s_bed='$stu_bed',d_id='{$dor_details_now['d_id']}' WHERE s_no='{$users_stu['s_no']}'");
+            if ($stu_dor != $users_stu_current_dor ['d_name']) {
+                $temp = $users_stu_current_dor ['d_stu_num_now'] - 1;
+                mysql_query("UPDATE dormitories SET d_stu_num_now='$temp' WHERE d_id='{$users_stu['d_id']}'");
+                $temp = $dor_details_now ['d_stu_num_now'] + 1;
+                mysql_query("UPDATE dormitories SET d_stu_num_now='$temp' WHERE d_id='{$dor_details_now['d_id']}'");
             }
 
-            echo "<script>alert('学号 {$stu['s_no']} 已更换宿舍与床位！');location.href='?r=dorstu&db={$studor['db_no']}'</script>";
+//            echo "<script>alert('学号 {$users_stu['s_no']} 已更换宿舍与床位！');location.href='?r=dorstu&db={$studor['db_no']}'</script>";
+            echo "<script>alert('学号 {$users_stu['s_no']} 已更换宿舍与床位！');location.href='?r=user-stu&sno=$sno'</script>";
             exit ();
         }
     }
@@ -193,7 +201,7 @@ if ($save != "") {
                             <label for="user-no" class="am-u-sm-3 am-form-label">学号</label>
                             <div class="am-u-sm-9">
                                 <input type="text" id="user-no" name="user-no" placeholder="请输入你的学号" readonly="true"
-                                       value="<?php echo $users_stu['s_no'] ?>">
+                                       value="<?php echo $users_stu_current['s_no'] ?>">
                             </div>
                         </div>
 
@@ -201,7 +209,7 @@ if ($save != "") {
                             <label for="user-name" class="am-u-sm-3 am-form-label">姓名</label>
                             <div class="am-u-sm-9">
                                 <input type="text" id="user-name" name="user-name" placeholder="请输入你的姓名"
-                                       value="<?php echo $users_stu_name['u_name'] ?>" <?php echo $permission_read ?>>
+                                       value="<?php echo $users_stu_current_name_list['u_name'] ?>" <?php echo $permission_read ?>>
                                 <small>输入你的名字，让我们记住你。</small>
                             </div>
                         </div>
@@ -210,7 +218,7 @@ if ($save != "") {
                             <label for="user-sex" class="am-u-sm-3 am-form-label">性别</label>
                             <div class="am-u-sm-9">
                                 <input type="text" id="user-sex" name="user-sex" placeholder="输入你的性别"
-                                       value="<?php echo $users_stu['s_sex'] ?>" <?php echo $permission_read ?>>
+                                       value="<?php echo $users_stu_current['s_sex'] ?>" <?php echo $permission_read ?>>
                             </div>
                         </div>
 
@@ -218,7 +226,7 @@ if ($save != "") {
                             <label for="user-age" class="am-u-sm-3 am-form-label">年龄</label>
                             <div class="am-u-sm-9">
                                 <input type="number" pattern="[0-9]*" id="user-age" name="user-age" placeholder="输入你的年龄"
-                                       value="<?php echo $users_stu['s_age'] ?>" <?php echo $permission_read ?>>
+                                       value="<?php echo $users_stu_current['s_age'] ?>" <?php echo $permission_read ?>>
                             </div>
                         </div>
 
@@ -226,7 +234,7 @@ if ($save != "") {
                             <label for="user-department" class="am-u-sm-3 am-form-label">所在院系</label>
                             <div class="am-u-sm-9">
                                 <input type="text" id="user-department" name="user-department" placeholder="输入你所在的院系"
-                                       value="<?php echo $users_stu['s_department'] ?>" <?php echo $permission_read ?>>
+                                       value="<?php echo $users_stu_current['s_department'] ?>" <?php echo $permission_read ?>>
                             </div>
                         </div>
 
@@ -234,7 +242,7 @@ if ($save != "") {
                             <label for="user-grade" class="am-u-sm-3 am-form-label">年级</label>
                             <div class="am-u-sm-9">
                                 <input type="text" id="user-grade" name="user-grade" placeholder="输入你所在的年级"
-                                       value="<?php echo $users_stu['s_grade'] ?>" <?php echo $permission_read ?>>
+                                       value="<?php echo $users_stu_current['s_grade'] ?>" <?php echo $permission_read ?>>
                             </div>
                         </div>
 
@@ -242,7 +250,7 @@ if ($save != "") {
                             <label for="user-phone" class="am-u-sm-3 am-form-label">电话</label>
                             <div class="am-u-sm-9">
                                 <input type="tel" id="user-phone" name="user-phone" placeholder="输入你的电话号码"
-                                       value="<?php echo $users_stu['s_phone'] ?>" <?php echo $permission_read ?>>
+                                       value="<?php echo $users_stu_current['s_phone'] ?>" <?php echo $permission_read ?>>
                             </div>
                         </div>
 
@@ -250,7 +258,7 @@ if ($save != "") {
                             <label for="user-dor-build" class="am-u-sm-3 am-form-label">宿舍楼</label>
                             <div class="am-u-sm-9">
                                 <input type="text" id="user-dor-build" name="user-dor-build" placeholder="输入你所在的宿舍楼"
-                                       value="<?php echo $user_stu_dor_build_name['db_name'] ?>" <?php echo $permission_read ?>>
+                                       value="<?php echo $user_stu_current_dor_build['db_name'] ?>" <?php echo $permission_read ?>>
                             </div>
                         </div>
 
@@ -266,7 +274,7 @@ if ($save != "") {
                                 }
                                 // 把该宿舍楼的 所有宿舍号 遍历到数组中，输出
                                 while ($db_dor = mysql_fetch_array($dor_list_result)) {
-                                    if ($db_dor['d_name'] == $users_stu_dor['d_name']) {
+                                    if ($db_dor['d_name'] == $users_stu_current_dor['d_name']) {
                                         echo "<option value='{$db_dor['d_name']}' selected='selected'>{$db_dor['d_name']}</option>";
                                     } else {
                                         echo "<option value='{$db_dor['d_name']}'>{$db_dor['d_name']}</option>";
@@ -290,8 +298,8 @@ if ($save != "") {
                                 }
 
                                 // 输出该楼的 所有床位
-                                for ($i = 1; $i <= $users_stu_dor['d_bed_num']; $i++) {
-                                    if ($i == $users_stu['s_bed']) {
+                                for ($i = 1; $i <= $users_stu_current_dor['d_bed_num']; $i++) {
+                                    if ($i == $users_stu_current['s_bed']) {
                                         echo "<option value='$i' selected='selected'>$i</option>";
                                     } else {
                                         echo "<option value='$i' >$i</option>";

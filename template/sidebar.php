@@ -43,7 +43,7 @@ $students_count = mysql_num_rows($student_result);
             ?>
             <li><a href="<?php echo $data_href ?>" class="am-cf"><span class="am-icon-check"></span> 个人资料<span
                             class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a></li>
-            <li class="admin-parent" <?php if ($user_permission == -1) echo 'style="display: none;"' ?>>
+            <li class="admin-parent" <?php if ($user_permission == -1 || $user_permission == 1) echo 'style="display: none;"' ?>>
                 <a class="am-cf" data-am-collapse="{target: '#object-nav'}"><span class="am-icon-user-secret"></span>
                     对象管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
                 <ul class="am-list am-collapse admin-sidebar-sub am-in" id="object-nav">
