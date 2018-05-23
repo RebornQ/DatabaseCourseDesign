@@ -6,7 +6,7 @@
  * Time: 17:33
  */
 
-//todo Fix: Permission为-1时?r=user-admin-normal&uno=20180301仍可访问，下一版修复为404
+//Todo Fixing: Permission为-1时?r=user-admin-normal&uno=20180301仍可访问，下一次更新修复为404
 
 require 'inc/connect.php';//链接数据库
 require 'inc/checklogin.php';
