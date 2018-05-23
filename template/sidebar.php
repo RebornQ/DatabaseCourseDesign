@@ -47,7 +47,7 @@ $students_count = mysql_num_rows($student_result);
                 <a class="am-cf" data-am-collapse="{target: '#object-nav'}"><span class="am-icon-user-secret"></span>
                     对象管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
                 <ul class="am-list am-collapse admin-sidebar-sub am-in" id="object-nav">
-                    <li><a href="?r=404"><span class="am-icon-table"></span> 超管<span
+                    <li><a href="?r=admin-list-super"><span class="am-icon-table"></span> 超管<span
                                     class="am-badge am-badge-secondary am-margin-right am-fr"><?php echo $super_admins_count ?></span></a>
                     </li>
                     <li><a href="?r=404"><span class="am-icon-table"></span> 宿管<span
