@@ -6,11 +6,14 @@
  * Time: 17:33
  */
 
-//Todo Fixing: 1.Permission为-1时?r=user-admin-super&uno=20180201仍可访问，下一次更新修复为404;
-
 require 'inc/connect.php';//链接数据库
 require 'inc/checklogin.php';
 include 'tools/tool_database.php';
+
+////修复Permission为-1或1时?r=user-admin-super&uno=20180201仍可访问的问题
+//if ($user_permission != 0) {
+//    header("Location: ?r=permission-denied");
+//}
 
 $uno = $_GET['uno'];
 

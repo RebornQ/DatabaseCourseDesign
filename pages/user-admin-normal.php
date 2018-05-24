@@ -6,11 +6,14 @@
  * Time: 17:33
  */
 
-//Todo Fixing: Permission为-1时?r=user-admin-normal&uno=20180301仍可访问，下一次更新修复为404
-
 require 'inc/connect.php';//链接数据库
 require 'inc/checklogin.php';
 include 'tools/tool_database.php';
+
+////修复Permission为-1时?r=user-admin-normal&uno=20180301仍可访问的问题
+//if ($user_permission != 0 || $user_permission != 1) {
+//    header("Location: ?r=permission-denied");
+//}
 
 $uno = $_GET['uno'];
 

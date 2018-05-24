@@ -6,12 +6,17 @@
  * Time: 17:33
  */
 
-//Todo Fixing: Permission为-1或1时?r=admin-list-super仍可访问，下一次更新修复为404
 
-//Todo Add:1.搜索 2.分页查询 3.新增 4.批量删除
+//Todo Add:1.搜索 2.新增 4.批量删除
 
 require 'inc/connect.php';//链接数据库
 require 'inc/checklogin.php';
+
+////修复Permission为-1或1时?r=admin-list-super仍可访问的问题
+//if ($user_permission != 0) {
+//    header("Location: ?r=permission-denied");
+//}
+
 
 //分页：http://www.runoob.com/w3cnote/php-mysql-pagination.html
 $num_rec_per_page = 10;   // 每页显示数量
@@ -75,7 +80,7 @@ $super_admins_count_page = mysql_num_rows($super_admin_result_page);
             <hr>
 
             <div class="am-g">
-                <div class="am-u-sm-12 am-u-md-6">
+                <div class="am-u-sm-12 am-u-md-6" <?php if ($user_permission != 0) echo 'style="display: none;"' ?>>
                     <div class="am-btn-toolbar">
                         <div class="am-btn-group am-btn-group-xs">
                             <button type="button" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增
@@ -106,7 +111,7 @@ $super_admins_count_page = mysql_num_rows($super_admin_result_page);
                                 <th class="table-check"><input type="checkbox"/></th>
                                 <th class="table-id">编号</th>
                                 <th class="table-author am-hide-sm-only">姓名</th>
-                                <th class="table-set">操作</th>
+                                <th class="table-set" <?php if ($user_permission != 0) echo 'style="display: none;"' ?>>操作</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -121,7 +126,7 @@ $super_admins_count_page = mysql_num_rows($super_admin_result_page);
                                     <td class="am-hide-sm-only"><a
                                                 href="?r=user-admin-super&uno=<?php echo $super_admins['u_no'] ?>"><?php echo $super_admins['u_name'] ?></a>
                                     </td>
-                                    <td>
+                                    <td <?php if ($user_permission != 0) echo 'style="display: none;"' ?>>
                                         <div class="am-btn-toolbar">
                                             <div class="am-btn-group am-btn-group-xs">
                                                 <button class="am-btn am-btn-default am-btn-xs am-text-secondary"
