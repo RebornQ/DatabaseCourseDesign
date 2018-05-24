@@ -21,6 +21,16 @@ $student_query = "SELECT * FROM users WHERE u_permission=-1 ORDER BY u_id DESC";
 $student_result = mysql_query($student_query) or die ('SQL语句有误：' . mysql_error());
 $students_count = mysql_num_rows($student_result);
 
+//查询所有宿舍楼记录
+$dormitory_builds_query = "SELECT * FROM dormitory_builds ORDER BY db_id ";
+$dormitory_builds_result = mysql_query($dormitory_builds_query) or die ('SQL语句有误：' . mysql_error());
+$dormitory_builds_count = mysql_num_rows($dormitory_builds_result);
+
+//查询所有宿舍记录
+$dormitories_query = "SELECT * FROM dormitories ORDER BY db_id ";
+$dormitories_result = mysql_query($dormitories_query) or die ('SQL语句有误：' . mysql_error());
+$dormitories_count = mysql_num_rows($dormitories_result);
+
 ?>
 <div class="admin-sidebar am-offcanvas" id="admin-offcanvas">
     <div class="am-offcanvas-bar admin-offcanvas-bar">
@@ -47,10 +57,12 @@ $students_count = mysql_num_rows($student_result);
                 <a class="am-cf" data-am-collapse="{target: '#object-nav'}"><span class="am-icon-user-secret"></span>
                     对象管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
                 <ul class="am-list am-collapse admin-sidebar-sub am-in" id="object-nav">
-                    <li <?php if ($user_permission == -1 || $user_permission == 1) echo 'style="display: none;"' ?>><a href="?r=list-admin-super"><span class="am-icon-table"></span> 超管<span
+                    <li <?php if ($user_permission == -1 || $user_permission == 1) echo 'style="display: none;"' ?>><a
+                                href="?r=list-admin-super"><span class="am-icon-table"></span> 超管<span
                                     class="am-badge am-badge-secondary am-margin-right am-fr"><?php echo $super_admins_count ?></span></a>
                     </li>
-                    <li <?php if ($user_permission == -1 || $user_permission == 1) echo 'style="display: none;"' ?>><a href="?r=list-admin-normal"><span class="am-icon-table"></span> 普管<span
+                    <li <?php if ($user_permission == -1 || $user_permission == 1) echo 'style="display: none;"' ?>><a
+                                href="?r=list-admin-normal"><span class="am-icon-table"></span> 普管<span
                                     class="am-badge am-badge-secondary am-margin-right am-fr"><?php echo $normal_admins_count ?></span></a>
                     </li>
                     <li><a href="?r=list-stu"><span class="am-icon-table"></span> 学生<span
@@ -62,12 +74,20 @@ $students_count = mysql_num_rows($student_result);
                 <a class="am-cf" data-am-collapse="{target: '#dormitory-nav'}"><span class="am-icon-calendar"></span>
                     宿舍管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
                 <ul class="am-list am-collapse admin-sidebar-sub am-in" id="dormitory-nav">
-                    <li><a href="?r=404"><span class="am-icon-table"></span> C18<span
-                                    class="am-badge am-badge-secondary am-margin-right am-fr">3</span></a></li>
-                    <li><a href="?r=404"><span class="am-icon-table"></span> C19<span
-                                    class="am-badge am-badge-secondary am-margin-right am-fr">2</span></a></li>
-                    <li><a href="?r=404"><span class="am-icon-table"></span> C21<span
-                                    class="am-badge am-badge-secondary am-margin-right am-fr">24</span></a></li>
+                    <!--<li><a href="?r=404"><span class="am-icon-table"></span> C18<span-->
+                    <!--     class="am-badge am-badge-secondary am-margin-right am-fr">3</span></a></li>-->
+                    <!-- <li><a href="?r=404"><span class="am-icon-table"></span> C19<span-->
+                    <!--遍历宿舍楼-->
+                    <?php
+                    // 结果集遍历到数组
+                    while ($dormitory_builds = mysql_fetch_array($dormitory_builds_result)) {
+                        ?>
+                        <li><a href="?r=list-dormitories&db_id=<?php echo $dormitory_builds['db_id'] ?>"><span
+                                        class="am-icon-table"></span> <?php echo $dormitory_builds['db_name'] ?>
+                                <span
+                                        class="am-badge am-badge-secondary am-margin-right am-fr">共<?php echo mysql_num_rows(mysql_query("SELECT dormitories.db_id FROM dormitories WHERE db_id={$dormitory_builds['db_id']} ORDER BY db_id ")) ?>个宿舍</span></a>
+                        </li>
+                    <?php } ?>
                 </ul>
             </li>
             <li><a href="?r=outlogin"><span class="am-icon-sign-out"></span> 注销</a></li>
