@@ -34,6 +34,13 @@ $as_password_new = $_POST['admin-password-super-new'];
 $as_password_repeat = $_POST['admin-password-super-repeat'];
 $as_password_changing = $_POST['admin-password-super-changing'];
 
+// 判断用户权限，赋予不同的权限
+if ($uno == "" || $user_permission != 0) {
+    header("Location: ?r=permission-denied");
+    exit();
+//        echo "<script>history.back()</script>";
+}
+
 /* 修改 信息 */
 if ($as_save != "") {
 

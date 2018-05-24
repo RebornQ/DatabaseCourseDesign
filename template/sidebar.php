@@ -37,23 +37,23 @@ $students_count = mysql_num_rows($student_result);
                     $data_href = "?r=user-admin-normal&uno={$users['u_no']}&edit_target=self";
                     break;
                 case -1 :
-                    $data_href = "?r=user-stu&uno={$users['u_no']}&edit_target=self";
+                    $data_href = "?r=user-stu&sno={$users['u_no']}&edit_target=self";
                     break;
             }
             ?>
             <li><a href="<?php echo $data_href ?>" class="am-cf"><span class="am-icon-check"></span> 个人资料<span
                             class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a></li>
-            <li class="admin-parent" <?php if ($user_permission == -1 || $user_permission == 1) echo 'style="display: none;"' ?>>
+            <li class="admin-parent">
                 <a class="am-cf" data-am-collapse="{target: '#object-nav'}"><span class="am-icon-user-secret"></span>
                     对象管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
                 <ul class="am-list am-collapse admin-sidebar-sub am-in" id="object-nav">
-                    <li><a href="?r=admin-list-super"><span class="am-icon-table"></span> 超管<span
+                    <li <?php if ($user_permission == -1 || $user_permission == 1) echo 'style="display: none;"' ?>><a href="?r=list-admin-super"><span class="am-icon-table"></span> 超管<span
                                     class="am-badge am-badge-secondary am-margin-right am-fr"><?php echo $super_admins_count ?></span></a>
                     </li>
-                    <li><a href="?r=admin-list-normal"><span class="am-icon-table"></span> 普管<span
+                    <li <?php if ($user_permission == -1 || $user_permission == 1) echo 'style="display: none;"' ?>><a href="?r=list-admin-normal"><span class="am-icon-table"></span> 普管<span
                                     class="am-badge am-badge-secondary am-margin-right am-fr"><?php echo $normal_admins_count ?></span></a>
                     </li>
-                    <li><a href="?r=404"><span class="am-icon-table"></span> 学生<span
+                    <li><a href="?r=list-stu"><span class="am-icon-table"></span> 学生<span
                                     class="am-badge am-badge-secondary am-margin-right am-fr"><?php echo $students_count ?></span></a>
                     </li>
                 </ul>

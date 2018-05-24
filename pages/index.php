@@ -52,13 +52,13 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
             </div>
 
             <ul class="am-avg-sm-1 am-avg-md-4 am-margin am-padding am-text-center admin-content-list ">
-                <li><a href="?r=admin-list-super" class="am-text-success"><span
+                <li><a href="?r=list-admin-super" class="am-text-success"><span
                                 class="am-icon-btn am-icon-user-md"></span><br/>超级管理员<br/><?php echo $super_admins_count?></a></li>
-                <li><a href="?r=admin-list-normal" class="am-text-warning"><span
+                <li><a href="?r=list-admin-normal" class="am-text-warning"><span
                                 class="am-icon-btn am-icon-user-md"></span><br/>普通管理员<br/><?php echo $normal_admins_count?></a></li>
                 <li><a href="#" class="am-text-danger"><span class="am-icon-btn am-icon-recycle"></span><br/>宿舍楼<br/>19</a>
                 </li>
-                <li><a href="#" class="am-text-secondary"><span
+                <li <?php if ($user_permission == -1) echo 'readonly="true"' ?>><a href="?r=list-stu" class="am-text-secondary"><span
                                 class="am-icon-btn am-icon-users"></span><br/>学生<br/><?php echo $students_count?></a></li>
             </ul>
 
@@ -90,7 +90,7 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
                             <tr>
 <!--                                <td>--><?php //echo $students['s_id']?><!--</td>-->
                                 <td><?php echo $students['s_no']?></td>
-                                <td><a href="?r=user-stu&sno=<?php echo $students['s_no']?>"><?php echo $students['u_name']?></a></td>
+                                <td><a href="?r=user-stu&sno=<?php echo $students['s_no']?>&edit_target=<?php if ($students['s_no'] == $user_no) echo "self"; else echo "others"; ?>"><?php echo $students['u_name']?></a></td>
                                 <td><?php echo $students['s_sex']?></td>
                                 <td><?php echo $students['s_age']?></td>
                                 <td><span class="am-badge am-badge-success"><?php echo $students['s_department']?></span></td>

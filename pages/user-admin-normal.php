@@ -31,8 +31,10 @@ if ($edit_target == "self") {
         }
     }
 } else if ($edit_target == "others") {
-    if ($uno == "") {
-        echo "<script>history.back()</script>";
+    if ($uno == "" || ($user_permission != 0 && $uno != $user_no)) {
+        header("Location: ?r=permission-denied");
+        exit();
+//        echo "<script>history.back()</script>";
     } else {
         $permission_show = "style=\"display: none;\"";
         if ($user_permission == 0) {

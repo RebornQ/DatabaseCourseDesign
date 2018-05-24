@@ -5,23 +5,27 @@ include 'tools/tool_database.php';
 
 $edit_target = $_GET['edit_target'];
 $sno = $_GET['sno'];
-$uno = $_GET['uno'];
+//$uno = $_GET['uno'];
 
 $permission_read = "true";
 $permission_read = "readonly='$permission_read'";
 // 判断用户权限，赋予不同的标签权限
 if ($edit_target == "self") {
-    if ($uno == "" || ($user_permission == -1 && $uno != $user_no)) {
+    $permission_show = "";
+    if ($sno == "" || ($user_permission == -1 && $sno != $user_no)) {
         echo "<script>history.back()</script>";
     } else {
         if ($user_permission == 0) {
             $permission_read = "";
         }
     }
-} else {
-    if ($sno == "" || ($user_permission == -1 && $sno != $user_no)) {
-        echo "<script>history.back()</script>";
+} else if ($edit_target == "others") {
+    if ($sno == ""|| ($user_permission == -1 && $sno != $user_no)) {
+        header("Location: ?r=permission-denied");
+        exit();
+//        echo "<script>history.back()</script>";
     } else {
+        $permission_show = "style=\"display: none;\"";
         if ($user_permission == 0) {
             $permission_read = "";
         }
@@ -30,9 +34,6 @@ if ($edit_target == "self") {
 
 // 查询 当前用户的所有信息
 $users_stu_current_query = "SELECT * FROM students WHERE s_no='$sno' ORDER BY s_id DESC";
-if ($edit_target == 'self') {
-    $users_stu_current_query = "SELECT * FROM students WHERE s_no='$uno' ORDER BY s_id DESC";
-}
 $users_stu_current_result = mysql_query($users_stu_current_query) or die ('SQL语句有误：' . mysql_error());
 $users_stu_current = mysql_fetch_array($users_stu_current_result);
 //echo "<script>alert('{$users_stu_current['s_no']}');</script>";
@@ -146,7 +147,7 @@ if ($save != "") {
 
     // 学生更改密码
     if ($u_password != "" && $u_password_new != "" && $u_password_repeat != "") {
-        if (md5($u_password) != queryPasswordByUno($uno)) {
+        if (md5($u_password) != queryPasswordByUno($sno)) {
             echo "<script>alert('登录密码错误！请重新输入！');history.back()</script>";
             exit ();
         }
@@ -156,7 +157,7 @@ if ($save != "") {
         }
         if ($user_permission == -1) {
             $passMD5Temp = md5($u_password_new);
-            mysql_query("UPDATE users SET u_password='$passMD5Temp' WHERE u_no='$uno'");
+            mysql_query("UPDATE users SET u_password='$passMD5Temp' WHERE u_no='$sno'");
 //            echo "<script>alert('密码更改成功！请重新登录！');location.href='?r=user-stu&sno=$sno'</script>";
             echo "<script>alert('密码更改成功！请重新登录！');location.href='?r=outlogin'</script>";
             exit ();
@@ -348,7 +349,7 @@ if ($save != "") {
                             </div>
                         </div>
 
-                        <div class="am-form-group" <?php if ($user_permission != -1) echo 'style="display: none;"' ?>>
+                        <div class="am-form-group" <?php echo $permission_show ?>>
                             <label for="user-password" class="am-u-sm-3 am-form-label">登录密码</label>
                             <div class="am-u-sm-9">
                                 <input type="password" id="user-password" name="user-password"
@@ -356,7 +357,7 @@ if ($save != "") {
                             </div>
                         </div>
 
-                        <div class="am-form-group" <?php if ($user_permission != -1) echo 'style="display: none;"' ?>>
+                        <div class="am-form-group" <?php echo $permission_show ?>>
                             <label for="user-password-new" class="am-u-sm-3 am-form-label">新密码</label>
                             <div class="am-u-sm-9">
                                 <input type="password" id="user-password-new" name="user-password-new"
@@ -364,7 +365,7 @@ if ($save != "") {
                             </div>
                         </div>
 
-                        <div class="am-form-group" <?php if ($user_permission != -1) echo 'style="display: none;"' ?>>
+                        <div class="am-form-group" <?php echo $permission_show ?>>
                             <label for="user-password-repeat" class="am-u-sm-3 am-form-label">确认密码</label>
                             <div class="am-u-sm-9">
                                 <input type="password" id="user-password-repeat" name="user-password-repeat"
@@ -375,7 +376,7 @@ if ($save != "") {
                         <div class="am-form-group">
                             <div class="am-u-sm-9 am-u-sm-push-3">
                                 <!--                                <button type="submit" name="submit" value="yes" class="am-btn am-btn-primary">保存修改</button>-->
-                                <input type="submit" name="save" value="保存修改" class="am-btn am-btn-primary">
+                                <input type="submit" name="save" value="保存修改" class="am-btn am-btn-primary" <?php if ($edit_target == "others" && $user_permission != -1) echo ""; else echo $permission_show ?>>
                                 <!--                                <input type="submit" name="forget" value="忘记密码 ^_^? " class="am-btn am-btn-default am-btn-sm am-fr">-->
                             </div>
                         </div>
