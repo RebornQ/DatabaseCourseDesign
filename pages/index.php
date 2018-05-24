@@ -54,7 +54,7 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
             <ul class="am-avg-sm-1 am-avg-md-4 am-margin am-padding am-text-center admin-content-list ">
                 <li><a href="?r=admin-list-super" class="am-text-success"><span
                                 class="am-icon-btn am-icon-user-md"></span><br/>超级管理员<br/><?php echo $super_admins_count?></a></li>
-                <li><a href="#" class="am-text-warning"><span
+                <li><a href="?r=admin-list-normal" class="am-text-warning"><span
                                 class="am-icon-btn am-icon-user-md"></span><br/>普通管理员<br/><?php echo $normal_admins_count?></a></li>
                 <li><a href="#" class="am-text-danger"><span class="am-icon-btn am-icon-recycle"></span><br/>宿舍楼<br/>19</a>
                 </li>
@@ -81,18 +81,6 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
                         </tr>
                         </thead>
                         <tbody>
-
-                        <!--遍历普通管理员-->
-                        <?php
-                        // 结果集遍历到数组
-                        while ( $normal_admins = mysql_fetch_array ( $normal_admin_result ) ) {
-                            ?>
-                            <tr>
-                                <!--                                <td>--><?php //echo $normal_admins['u_id']?><!--</td>-->
-                                <td><?php echo $normal_admins['u_no']?></td>
-                                <td><a href="?r=user-admin-normal&uno=<?php echo $normal_admins['u_no']?>"><?php echo $normal_admins['u_name']?></a></td>
-                            </tr>
-                        <?php }?>
 
                         <!--遍历学生-->
                         <?php

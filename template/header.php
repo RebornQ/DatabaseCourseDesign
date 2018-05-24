@@ -30,7 +30,7 @@
                         $data_href = "?r=user-admin-super&uno={$users['u_no']}";
                         break;
                     case 1 :
-                        $data_href = "?r=user-admin-normal&uno={$users['u_no']}";
+                        $data_href = "?r=user-admin-normal&uno={$users['u_no']}&edit_target=self";
                         break;
                     case -1 :
                         $data_href = "?r=user-stu&uno={$users['u_no']}&edit_target=self";

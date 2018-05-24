@@ -34,7 +34,7 @@ $students_count = mysql_num_rows($student_result);
                     $data_href = "?r=user-admin-super&uno={$users['u_no']}";
                     break;
                 case 1 :
-                    $data_href = "?r=user-admin-normal&uno={$users['u_no']}";
+                    $data_href = "?r=user-admin-normal&uno={$users['u_no']}&edit_target=self";
                     break;
                 case -1 :
                     $data_href = "?r=user-stu&uno={$users['u_no']}&edit_target=self";
@@ -50,7 +50,7 @@ $students_count = mysql_num_rows($student_result);
                     <li><a href="?r=admin-list-super"><span class="am-icon-table"></span> 超管<span
                                     class="am-badge am-badge-secondary am-margin-right am-fr"><?php echo $super_admins_count ?></span></a>
                     </li>
-                    <li><a href="?r=404"><span class="am-icon-table"></span> 宿管<span
+                    <li><a href="?r=admin-list-normal"><span class="am-icon-table"></span> 普管<span
                                     class="am-badge am-badge-secondary am-margin-right am-fr"><?php echo $normal_admins_count ?></span></a>
                     </li>
                     <li><a href="?r=404"><span class="am-icon-table"></span> 学生<span

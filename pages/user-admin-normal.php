@@ -16,15 +16,28 @@ include 'tools/tool_database.php';
 //}
 
 $uno = $_GET['uno'];
+$edit_target = $_GET['edit_target'];
 
 $permission_read = "true";
 $permission_read = "readonly='$permission_read'";
 // 判断用户权限，赋予不同的标签权限
-if ($uno == "" || ($user_permission == 1 && $uno != $user_no)) {
-    echo "<script>history.back()</script>";
-} else {
-    if ($user_permission == 0) {
-        $permission_read = "";
+if ($edit_target == "self") {
+    $permission_show = "";
+    if ($uno == "" || ($user_permission == 1 && $uno != $user_no)) {
+        echo "<script>history.back()</script>";
+    } else {
+        if ($user_permission == 0) {
+            $permission_read = "";
+        }
+    }
+} else if ($edit_target == "others") {
+    if ($uno == "") {
+        echo "<script>history.back()</script>";
+    } else {
+        $permission_show = "style=\"display: none;\"";
+        if ($user_permission == 0) {
+            $permission_read = "";
+        }
     }
 }
 
@@ -50,7 +63,7 @@ if ($an_save != "") {
         }
 
         mysql_query("UPDATE users SET u_name='$an_name' WHERE u_no='$an_no'") or die ('SQL语句有误：' . mysql_error());;
-        echo "<script>alert('信息更新成功！');location.href='?r=user-admin-normal&uno=$uno'</script>";
+        echo "<script>alert('信息更新成功！');location.href='?r=user-admin-normal&uno=$uno&edit_target=$edit_target'</script>";
     }
 
     // 普管更改密码
@@ -146,7 +159,7 @@ if ($an_save != "") {
                             </div>
                         </div>
 
-                        <div class="am-form-group" <?php if ($user_permission != 1) echo 'style="display: none;"' ?>>
+                        <div class="am-form-group" <?php echo $permission_show ?>>
                             <label for="admin-password-normal" class="am-u-sm-3 am-form-label">登录密码</label>
                             <div class="am-u-sm-9">
                                 <input type="password" id="admin-password-normal" name="admin-password-normal"
@@ -154,7 +167,7 @@ if ($an_save != "") {
                             </div>
                         </div>
 
-                        <div class="am-form-group" <?php if ($user_permission != 1) echo 'style="display: none;"' ?>>
+                        <div class="am-form-group" <?php echo $permission_show ?>>
                             <label for="admin-password-normal-new" class="am-u-sm-3 am-form-label">新密码</label>
                             <div class="am-u-sm-9">
                                 <input type="password" id="admin-password-normal-new" name="admin-password-normal-new"
@@ -162,7 +175,7 @@ if ($an_save != "") {
                             </div>
                         </div>
 
-                        <div class="am-form-group" <?php if ($user_permission != 1) echo 'style="display: none;"' ?>>
+                        <div class="am-form-group" <?php echo $permission_show ?>>
                             <label for="admin-password-normal-repeat" class="am-u-sm-3 am-form-label">确认密码</label>
                             <div class="am-u-sm-9">
                                 <input type="password" id="admin-password-normal-repeat" name="admin-password-normal-repeat"
@@ -173,7 +186,7 @@ if ($an_save != "") {
                         <div class="am-form-group">
                             <div class="am-u-sm-9 am-u-sm-push-3">
                                 <!--                                <button type="submit" name="submit" value="yes" class="am-btn am-btn-primary">保存修改</button>-->
-                                <input type="submit" name="an_save" value="保存修改" class="am-btn am-btn-primary" <?php if ($user_permission != 1) echo 'style="display: none;"' ?>>
+                                <input type="submit" name="an_save" value="保存修改" class="am-btn am-btn-primary" <?php if ($edit_target == "others" && $user_permission == 0) echo ""; else echo $permission_show ?>>
                                 <!--                                <input type="submit" name="forget" value="忘记密码 ^_^? " class="am-btn am-btn-default am-btn-sm am-fr">-->
                             </div>
                         </div>
