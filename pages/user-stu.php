@@ -115,7 +115,7 @@ if ($save != "") {
 
         mysql_query("UPDATE users SET u_name='$u_name' WHERE u_no='$u_no'") or die ('SQL语句有误：' . mysql_error());;
         mysql_query("UPDATE students SET s_sex='$stu_sex',s_age='$stu_age',s_department='$stu_department',s_grade='$stu_grade',s_phone='$stu_phone' WHERE s_no='$u_no'") or die ('SQL语句有误：' . mysql_error());;
-        echo "<script>alert('信息更新成功！');location.href='?r=user-stu&sno=$sno'</script>";
+        echo "<script>alert('信息更新成功！');location.href='?r=user-stu&sno=$sno&edit_target=others'</script>";
     }
 
     // 超管 和 普管 可更换学生床位宿舍
@@ -128,7 +128,7 @@ if ($save != "") {
             mysql_query("UPDATE students SET s_bed='$stu_bed',d_id='{$dor_details_now['d_id']}' WHERE s_no='{$users_stu['s_no']}'");//目标位置换给自己
 
 //            echo "<script>alert('学号 {$users_stu['s_no']} 与 {$bed_details_now['s_no']} 已互换宿舍！');location.href='?r=user-stu&db={$user_stu_current_dor_build['db_name']}'</script>";
-            echo "<script>alert('学号 {$users_stu['s_no']} 与 {$bed_details_now['s_no']} 已互换宿舍！');location.href='?r=user-stu&sno=$sno'</script>";
+            echo "<script>alert('学号 {$users_stu['s_no']} 与 {$bed_details_now['s_no']} 已互换宿舍！');location.href='?r=user-stu&sno=$sno&edit_target=others'</script>";
             exit ();
         } else {
             mysql_query("UPDATE students SET s_bed='$stu_bed',d_id='{$dor_details_now['d_id']}' WHERE s_no='{$users_stu['s_no']}'");
@@ -140,7 +140,7 @@ if ($save != "") {
             }
 
 //            echo "<script>alert('学号 {$users_stu['s_no']} 已更换宿舍与床位！');location.href='?r=dorstu&db={$studor['db_no']}'</script>";
-            echo "<script>alert('学号 {$users_stu['s_no']} 已更换宿舍与床位！');location.href='?r=user-stu&sno=$sno'</script>";
+            echo "<script>alert('学号 {$users_stu['s_no']} 已更换宿舍与床位！');location.href='?r=user-stu&sno=$sno&edit_target=others'</script>";
             exit ();
         }
     }

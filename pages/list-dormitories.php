@@ -96,10 +96,10 @@ $dor_count = mysql_num_rows($dor_result);
                 <div class="am-u-sm-12 am-u-md-6" <?php if ($user_permission == -1) echo 'style="display: none;"' ?>>
                     <div class="am-btn-toolbar">
                         <div class="am-btn-group am-btn-group-xs">
-                            <button type="button" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增
+                            <button id="bt_add" type="button" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增
                             </button>
                             </button>
-                            <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span>
+                            <button id="bt_del" type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span>
                                 批量删除
                             </button>
                         </div>
@@ -251,6 +251,17 @@ $dor_count = mysql_num_rows($dor_result);
 <!--[if (gte IE 9)|!(IE)]><!-->
 <script src="assets/js/jquery.min.js"></script>
 <!--<![endif]-->
+<script type="text/javascript">
+
+    $(function(){
+        $("#bt_add").click(function(){
+            window.location.href='?r=user-stu-new&checkvalue=<?php echo $db_name ?>';
+        });
+        $("#bt_del").click(function(){
+            window.location.href='#';
+        });
+    });
+</script>
 <script src="assets/js/amazeui.min.js"></script>
 <script src="assets/js/app.js"></script>
 </body>

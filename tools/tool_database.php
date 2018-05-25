@@ -8,6 +8,9 @@
  * @return
  */
 
+/**
+ * 宿舍相关查询
+ */
 function queryDorBuildIdByName($db_name)
 {
     $dor_build_query = "SELECT db_id FROM dormitory_builds WHERE db_name='$db_name'";
@@ -15,15 +18,6 @@ function queryDorBuildIdByName($db_name)
     $dor_build = mysql_fetch_array($dor_build_result);
     return $dor_build['db_id'];
 }
-
-function queryPasswordByUno($u_no)
-{
-    $users_query = "SELECT u_password FROM users WHERE u_no='$u_no' ORDER BY u_id DESC";
-    $users_result = mysql_query($users_query) or die ('SQL语句有误：' . mysql_error());
-    $users = mysql_fetch_array($users_result);
-    return $users['u_password'];
-}
-
 function queryDorBuildNameById($db_id)
 {
     $db_query = "SELECT db_name FROM dormitory_builds WHERE db_id=$db_id ORDER BY db_id";// 检索记录行 $start_from - ($start_from+15)
@@ -31,11 +25,28 @@ function queryDorBuildNameById($db_id)
     $db = mysql_fetch_array($db_result);
     return $db['db_name'];
 }
+function queryDorIdByDorBuildIdAndDorName($dor_build_id,$d_name)
+{
+    $d_query = "SELECT d_id FROM dormitories WHERE d_name=$d_name AND db_id=$dor_build_id";// 检索记录行 $start_from - ($start_from+15)
+    $d_result = mysql_query($d_query) or die ('SQL语句有误：' . mysql_error());
+    $dor = mysql_fetch_array($d_result);
+    return $dor['d_name'];
+}
 
+/**
+ * 用户相关查询
+ */
 function queryNameByUno($u_no)
 {
     $users_query = "SELECT u_name FROM users WHERE u_no='$u_no' ORDER BY u_id DESC";
     $users_result = mysql_query($users_query) or die ('SQL语句有误：' . mysql_error());
     $users = mysql_fetch_array($users_result);
     return $users['u_name'];
+}
+function queryPasswordByUno($u_no)
+{
+    $users_query = "SELECT u_password FROM users WHERE u_no='$u_no' ORDER BY u_id DESC";
+    $users_result = mysql_query($users_query) or die ('SQL语句有误：' . mysql_error());
+    $users = mysql_fetch_array($users_result);
+    return $users['u_password'];
 }
