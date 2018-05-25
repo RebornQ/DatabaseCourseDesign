@@ -3,7 +3,9 @@ require 'inc/connect.php';//链接数据库
 require 'inc/checklogin.php';
 include 'tools/tool_database.php';
 
+session_start();
 $edit_target = $_GET['edit_target'];
+$page_from = $_GET['from'];
 $sno = $_GET['sno'];
 //$uno = $_GET['uno'];
 
@@ -120,11 +122,125 @@ $bed_details_now = mysql_fetch_array($result_bed_details_now);
                 <div class="am-u-sm-12 am-u-md-8 am-u-md-pull-4">
                     <form class="am-form am-form-horizontal" method="post" name="add">
 
+                        <script>
+                            function request(id) {
+                                // var data = {checkvalue: document.getElementById(id).value};
+                                var data = document.getElementById(id).value;
+                                window.location.href = "?r=user-stu-new" + "&checkvalue=" + data + "&from=<?php echo $page_from?>";
+
+                            }
+
+                            // 在跳转的页面底部写上这些js
+                            window.onload = function () {
+                                // https://www.w3cschool.cn/lwp2e2/hqky12kg.html
+                                var url = location.href;
+                                var paraString = url.substring(url.indexOf("?") + 1, url.length).split("&");
+                                // console.log(paraString);
+                                var paraObj = {};
+                                for (i = 0; j = paraString[i]; i++) {
+                                    paraObj[j.substring(0, j.indexOf("=")).toLowerCase()] = j.substring(j.indexOf("=") + 1, j.length);
+                                }
+                                // console.log(paraObj);
+                                var returnValue = paraObj['checkvalue'];
+                                // console.log(returnValue);
+                                setSelectChecked('user-dor-build', returnValue);
+                                // if (typeof(returnValue) == "undefined") {
+                                //     return "";
+                                // } else {
+                                //     return returnValue;
+                                // }
+                            };
+                            // var theurl;
+                            // theurl = request("url");
+                            // if (theurl != '') {
+                            //     location = theurl
+                            // }
+                            function setSelectChecked(selectId, checkValue) {
+                                var select = document.getElementById(selectId);
+                                for (var i = 0; i < select.options.length; i++) {
+                                    if (select.options[i].innerHTML === checkValue) {
+                                        select.options[i].selected = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        </script>
+                        <div class="am-form-group">
+                            <label for="user-dor-build" class="am-u-sm-3 am-form-label">宿舍楼</label>
+                            <div class="am-u-sm-9">
+                                <?php
+                                // 判断 用户权限，是否可编辑
+                                if ($user_permission == -1 || $page_from == "dorlist") {
+                                    echo "<select name='user-dor-build' id='user-dor-build' disabled='disabled' onchange='request(this.id)'>";
+                                } else {
+                                    echo "<select name='user-dor-build' id='user-dor-build' onchange='request(this.id)'>";
+                                }
+                                // 把 所有宿舍楼 遍历到数组中，输出
+                                while ($dor_builds = mysql_fetch_array($users_all_dor_builds_result)) {
+                                    if ($dor_builds['db_name'] == 'C1') {
+                                        echo "<option value='{$dor_builds['db_name']}' selected='selected'>{$dor_builds['db_name']}</option>";
+                                    } else {
+                                        echo "<option value='{$dor_builds['db_name']}'>{$dor_builds['db_name']}</option>";
+                                    }
+                                }
+                                echo "</select>";
+                                ?>
+                            </div>
+                        </div>
+
+                        <div class="am-form-group">
+                            <label for="user-dor" class="am-u-sm-3 am-form-label">宿舍号</label>
+                            <div class="am-u-sm-9">
+                                <?php
+                                // 判断 用户权限，是否可编辑
+                                if ($user_permission == -1) {
+                                    echo "<select name='user-dor' disabled='disabled'>";
+                                } else {
+                                    echo "<select name='user-dor'>";
+                                }
+                                // 把该宿舍楼的 所有宿舍号 遍历到数组中，输出
+                                while ($db_dor = mysql_fetch_array($dor_list_result)) {
+                                    if ($db_dor['d_name'] == '101') {
+                                        echo "<option value='{$db_dor['d_name']}' selected='selected'>{$db_dor['d_name']}</option>";
+                                    } else {
+                                        echo "<option value='{$db_dor['d_name']}'>{$db_dor['d_name']}</option>";
+                                    }
+                                }
+                                echo "</select>";
+                                ?>
+
+                            </div>
+                        </div>
+
+                        <div class="am-form-group">
+                            <label for="user-bed" class="am-u-sm-3 am-form-label">床号</label>
+                            <div class="am-u-sm-9">
+                                <?php
+                                // 判断 用户权限，是否可编辑
+                                if ($user_permission == -1) {
+                                    echo "<select name='user-bed' disabled='disabled'>";
+                                } else {
+                                    echo "<select name='user-bed'>";
+                                }
+
+                                // 输出该楼的 所有床位
+                                for ($i = 1; $i <= $dor_list['d_bed_num']; $i++) {
+                                    if ($i == '1') {
+                                        echo "<option value='$i' selected='selected'>$i</option>";
+                                    } else {
+                                        echo "<option value='$i' >$i</option>";
+                                    }
+                                }
+                                echo "</select>";
+                                ?>
+                            </div>
+                        </div>
+
                         <div class="am-form-group">
                             <label for="user-no" class="am-u-sm-3 am-form-label">学号</label>
                             <div class="am-u-sm-9">
                                 <input type="text" id="user-no" name="user-no"
-                                       placeholder="请输入你的学号" <?php echo $permission_read ?>">
+                                       placeholder="请输入你的学号" <?php echo $permission_read ?> value="">
                             </div>
                         </div>
 
@@ -194,119 +310,6 @@ $bed_details_now = mysql_fetch_array($result_bed_details_now);
                             </div>
                         </div>
 
-                        <script>
-                            function request(id) {
-                                // var data = {checkvalue: document.getElementById(id).value};
-                                var data = document.getElementById(id).value;
-                                window.location.href = "?r=user-stu-new" + "&checkvalue=" + data;
-
-                            }
-
-                            // 在跳转的页面底部写上这些js
-                            window.onload = function () {
-                                // https://www.w3cschool.cn/lwp2e2/hqky12kg.html
-                                var url = location.href;
-                                var paraString = url.substring(url.indexOf("?") + 1, url.length).split("&");
-                                console.log(paraString);
-                                var paraObj = {};
-                                for (i = 0; j = paraString[i]; i++) {
-                                    paraObj[j.substring(0, j.indexOf("=")).toLowerCase()] = j.substring(j.indexOf("=") + 1, j.length);
-                                }
-                                console.log(paraObj);
-                                var returnValue = paraObj['checkvalue'];
-                                console.log(returnValue);
-                                setSelectChecked('user-dor-build', returnValue);
-                                // if (typeof(returnValue) == "undefined") {
-                                //     return "";
-                                // } else {
-                                //     return returnValue;
-                                // }
-                            };
-                            // var theurl;
-                            // theurl = request("url");
-                            // if (theurl != '') {
-                            //     location = theurl
-                            // }
-                            function setSelectChecked(selectId, checkValue) {
-                                var select = document.getElementById(selectId);
-                                for (var i = 0; i < select.options.length; i++) {
-                                    if (select.options[i].innerHTML == checkValue) {
-                                        select.options[i].selected = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        </script>
-                        <div class="am-form-group">
-                            <label for="user-dor-build" class="am-u-sm-3 am-form-label">宿舍楼</label>
-                            <div class="am-u-sm-9">
-                                <?php
-                                // 判断 用户权限，是否可编辑
-                                if ($user_permission == -1) {
-                                    echo "<select name='user-dor-build' id='user-dor-build' disabled='disabled' onchange='request(this.id)'>";
-                                } else {
-                                    echo "<select name='user-dor-build' id='user-dor-build' onchange='request(this.id)'>";
-                                }
-                                // 把 所有宿舍楼 遍历到数组中，输出
-                                while ($dor_builds = mysql_fetch_array($users_all_dor_builds_result)) {
-                                    if ($dor_builds['db_name'] == 'C1') {
-                                        echo "<option value='{$dor_builds['db_name']}' selected='selected'>{$dor_builds['db_name']}</option>";
-                                    } else {
-                                        echo "<option value='{$dor_builds['db_name']}'>{$dor_builds['db_name']}</option>";
-                                    }
-                                }
-                                echo "</select>";
-                                ?>
-                            </div>
-                        </div>
-
-                        <div class="am-form-group">
-                            <label for="user-dor" class="am-u-sm-3 am-form-label">宿舍号</label>
-                            <div class="am-u-sm-9">
-                                <?php
-                                // 判断 用户权限，是否可编辑
-                                if ($user_permission == -1) {
-                                    echo "<select name='user-dor' disabled='disabled'>";
-                                } else {
-                                    echo "<select name='user-dor'>";
-                                }
-                                // 把该宿舍楼的 所有宿舍号 遍历到数组中，输出
-                                while ($db_dor = mysql_fetch_array($dor_list_result)) {
-                                    if ($db_dor['d_name'] == '101') {
-                                        echo "<option value='{$db_dor['d_name']}' selected='selected'>{$db_dor['d_name']}</option>";
-                                    } else {
-                                        echo "<option value='{$db_dor['d_name']}'>{$db_dor['d_name']}</option>";
-                                    }
-                                }
-                                echo "</select>";
-                                ?>
-
-                            </div>
-                        </div>
-                        <div class="am-form-group">
-                            <label for="user-bed" class="am-u-sm-3 am-form-label">床号</label>
-                            <div class="am-u-sm-9">
-                                <?php
-                                // 判断 用户权限，是否可编辑
-                                if ($user_permission == -1) {
-                                    echo "<select name='user-bed' disabled='disabled'>";
-                                } else {
-                                    echo "<select name='user-bed'>";
-                                }
-
-                                // 输出该楼的 所有床位
-                                for ($i = 1; $i <= $dor_list['d_bed_num']; $i++) {
-                                    if ($i == '1') {
-                                        echo "<option value='$i' selected='selected'>$i</option>";
-                                    } else {
-                                        echo "<option value='$i' >$i</option>";
-                                    }
-                                }
-                                echo "</select>";
-                                ?>
-                            </div>
-                        </div>
-
                         <div class="am-form-group">
                             <label for="user-password" class="am-u-sm-3 am-form-label">登录密码</label>
                             <div class="am-u-sm-9">
@@ -328,7 +331,7 @@ $bed_details_now = mysql_fetch_array($result_bed_details_now);
                                 <!--                                <button type="submit" name="submit" value="yes" class="am-btn am-btn-primary">保存修改</button>-->
                                 <input type="submit" name="add" value="确认添加"
                                        class="am-btn am-btn-primary" <?php if ($user_permission != -1) echo ""; else echo $permission_show ?>>
-                                <!--                                <input type="button" name="forget" value="忘记密码 ^_^? " class="am-btn am-btn-default am-btn-sm am-fr" onclick="showMsgBox()">-->
+                                <!--                                <input type="button" name="forget" value="忘记密码 ^_^? " class="am-btn am-btn-default am-btn-sm am-fr" onclick="showErrorBox()">-->
                             </div>
                         </div>
                     </form>
@@ -369,12 +372,12 @@ $bed_details_now = mysql_fetch_array($result_bed_details_now);
 <script>
     msgBoxImagePath = "assets/i/img_msgbox/";
 
-    function showMsgBox(content) {
+    function showErrorBox(content) {
         $.msgBox({
             title: "警告",
             content: content,
             type: "error",
-            buttons: [{ value: "OK" }],
+            buttons: [{value: "OK"}],
             success: function (result) {
                 if (result === "OK") {
                     history.back();
@@ -384,6 +387,22 @@ $bed_details_now = mysql_fetch_array($result_bed_details_now);
         // $.MsgBox.Confirm("温馨提示", content, function () {
         //     history.back();
         // });
+    }
+
+    function showInfoBox(content, callback) {
+        $.msgBox({
+            title: "提示",
+            content: content,
+            type: "info",
+            buttons: [{value: "OK"}],
+            success: function (result) {
+                if (result === "OK") {
+                    if (typeof (callback) === 'function') {
+                        callback();
+                    }
+                }
+            }
+        });
     }
 </script>
 </body>
@@ -396,45 +415,45 @@ if ($add != "") {
     if ($user_permission != -1) {
         if ($u_no == "") {
 //            echo "<script>alert('学号 不能为空！');history.back()</script>";
-            echo "<script>showMsgBox('学号 不能为空！');</script>";
+            echo "<script>showErrorBox('学号 不能为空！');</script>";
             exit ();
         }
         if ($u_name == "") {
-            echo "<script>showMsgBox('姓名 不能为空！');</script>";
+            echo "<script>showErrorBox('姓名 不能为空！');</script>";
             exit ();
         }
         if ($stu_sex == "") {
-            echo "<script>showMsgBox('性别 不能为空！');</script>";
+            echo "<script>showErrorBox('性别 不能为空！');</script>";
             exit ();
         }
         if ($stu_age == "") {
-            echo "<script>showMsgBox('年龄 不能为空！');</script>";
+            echo "<script>showErrorBox('年龄 不能为空！');</script>";
             exit ();
         }
         if ($stu_department == "") {
-            echo "<script>showMsgBox('所在院系 不能为空！');</script>";
+            echo "<script>showErrorBox('所在院系 不能为空！');</script>";
             exit ();
         }
         if ($stu_grade == "") {
-            echo "<script>showMsgBox('年级 不能为空！');</script>";
+            echo "<script>showErrorBox('年级 不能为空！');</script>";
             exit ();
         }
         if ($stu_phone == "") {
-            echo "<script>showMsgBox('电话 不能为空！');</script>";
+            echo "<script>showErrorBox('电话 不能为空！');</script>";
             exit ();
         }
 
         // 设置密码
         if ($u_password != "" && $u_password_repeat != "") {
             if ($u_password != $u_password_repeat) {
-                echo "<script>alert('两次输入密码不一致！请重新输入！');history.back()</script>";
+                echo "<script>showErrorBox('两次输入密码不一致！请重新输入！');</script>";
                 exit ();
             }
             if ($user_permission != -1) {
                 $u_password_md5 = md5($u_password);
                 if (mysql_num_rows($result_bed_details_now) != 0) {// 若存在，即床已有人睡，则与学生间互换宿舍
                     echo "asdasd";
-                    echo "<script>showMsgBox('该宿舍床位已有人，请重新选择！');</script>";
+                    echo "<script>showErrorBox('该宿舍床位已有人，请重新选择！');</script>";
 //                    echo "<script>alert('该宿舍床位已有人，请重新选择！');history.back()</script>";
                     exit ();
                 } else {
@@ -442,12 +461,12 @@ if ($add != "") {
                     mysql_query("INSERT INTO students (s_no,s_sex,s_age,s_department,s_grade,s_phone,d_id,s_bed) VALUE ($u_no, '$stu_sex', $stu_age, '$stu_department', '$stu_grade', $stu_phone, {$dor_details_now['d_id']}, $stu_bed)") or die ('SQL语句有误：' . mysql_error());
                     $num_now_temp = $dor_details_now ['d_stu_num_now'] + 1;
                     mysql_query("UPDATE dormitories SET d_stu_num_now='$num_now_temp' WHERE d_id='{$dor_details_now['d_id']}'") or die ('SQL语句有误：' . mysql_error());
-                    echo "<script>alert('学号 $u_no 已添加！');location.href='?r=list-dormitories&db_id=$dor_build_select_id'</script>";
+                    echo "<script>showInfoBox('学号 $u_no 已添加！', function() { location.href='?r=list-dormitories&db_id=$dor_build_select_id';});</script>";
                     exit ();
                 }
             }
         } else {
-            echo "<script>alert('密码不能为空！请重新输入密码！');history.back()</script>";
+            echo "<script>showErrorBox('密码不能为空！请重新输入密码！');</script>";
             exit ();
         }
     }

@@ -377,7 +377,7 @@ if ($save != "") {
                             <div class="am-u-sm-9 am-u-sm-push-3">
                                 <!--                                <button type="submit" name="submit" value="yes" class="am-btn am-btn-primary">保存修改</button>-->
                                 <input type="submit" name="save" value="保存修改" class="am-btn am-btn-primary" <?php if ($edit_target == "others" && $user_permission != -1) echo ""; else echo $permission_show ?>>
-                                <!--                                <input type="submit" name="forget" value="忘记密码 ^_^? " class="am-btn am-btn-default am-btn-sm am-fr">-->
+                                <input type="submit" name="del" value="删除用户? " class="am-btn am-btn-default am-btn-sm am-fr" <?php if ($edit_target == "others" && $user_permission == 0) echo ""; else echo $permission_show ?>>
                             </div>
                         </div>
                     </form>
