@@ -50,6 +50,16 @@ function queryDorStuNumNowAndIdByUserNo($user_no)
     return $dor_num__id_now;
 }
 
+function queryIsDorExistByDorNameAndDorBuildId($db_id, $dor_name)
+{
+    $dor_query = "SELECT d_id FROM dormitories WHERE db_id=$db_id AND d_name=$dor_name";
+    $dor_result = mysql_query($dor_query) or die ('SQL语句有误：' . mysql_error());
+    $dor = mysql_fetch_array($dor_result);
+    if ($dor['d_id'] != "") {
+        return true;
+    }else return false;
+}
+
 /**
  * 用户相关查询
  * @param $u_no

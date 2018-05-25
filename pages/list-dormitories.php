@@ -262,7 +262,7 @@ $dor_count = mysql_num_rows($dor_result);
             window.location.href='#';
         });
         $("#bt_add_dor").click(function(){
-            window.location.href='?r=dor-new&db_id_select=<?php echo $db_id ?>&from=dorlist';
+            window.location.href='?r=dor-new&db_name_select=<?php echo $db_name ?>&from=dorlist';
         });
     });
 </script>

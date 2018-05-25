@@ -460,7 +460,7 @@ if ($add != "") {
 //                    echo "<script>alert('该宿舍床位已有人，请重新选择！');history.back()</script>";
                     exit ();
                 } else {
-                    echo "<script>showInfoBox('$stu_dor_build',null);</script>";
+//                    echo "<script>showInfoBox('$stu_dor_build',null);</script>";
                     mysql_query("INSERT INTO students (s_no,s_sex,s_age,s_department,s_grade,s_phone,d_id,s_bed) VALUE ($u_no, '$stu_sex', $stu_age, '$stu_department', '$stu_grade', '$stu_phone', {$dor_details_now['d_id']}, $stu_bed)") or die ('SQL语句有误：' . mysql_error());
                     mysql_query("INSERT INTO users (u_no, u_name, u_permission, u_password) VALUES ($u_no, '$u_name', '-1', '$u_password_md5')") or die ('SQL语句有误：' . mysql_error());
                     $num_now_temp = $dor_details_now ['d_stu_num_now'] + 1;
