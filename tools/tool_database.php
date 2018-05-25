@@ -40,8 +40,11 @@ function queryDorStuNumNowAndIdByUserNo($user_no)
     $dor_num__id_now = mysql_fetch_array($dor_num_now_id_result);
     return $dor_num__id_now;
 }
+
 /**
  * 用户相关查询
+ * @param $u_no
+ * @return
  */
 function queryNameByUno($u_no)
 {
@@ -56,4 +59,16 @@ function queryPasswordByUno($u_no)
     $users_result = mysql_query($users_query) or die ('SQL语句有误：' . mysql_error());
     $users = mysql_fetch_array($users_result);
     return $users['u_password'];
+}
+
+function queryIsUserExistByNo($u_no){
+    $users_query = "SELECT u_no FROM users WHERE u_no='$u_no' ORDER BY u_id DESC";
+    $users_result = mysql_query($users_query) or die ('SQL语句有误：' . mysql_error());
+    $users = mysql_fetch_array($users_result);
+    $stu_query = "SELECT s_no FROM students WHERE s_no='$u_no' ORDER BY s_id DESC";
+    $stu_result = mysql_query($stu_query) or die ('SQL语句有误：' . mysql_error());
+    $stu = mysql_fetch_array($stu_result);
+    if ($users['u_no'] != "" && $stu['s_no']) {
+        return true;
+    }else return false;
 }

@@ -283,7 +283,7 @@ $stu_count_page = mysql_num_rows($stu_result_page);
 <script type="text/javascript">
     $(function () {
         $("#bt_add").click(function () {
-            window.location.href = '?r=user-stu-new&checkvalue=C1&from=stulist';
+            window.location.href = '?r=user-stu-new&db_id_select=C1&from=stulist';
         });
         $("#bt_del").click(function () {
             //window.location.href = '?r=list-stu&delete_no=<?php //echo $students['s_no']?>//';

@@ -255,7 +255,7 @@ $dor_count = mysql_num_rows($dor_result);
 
     $(function(){
         $("#bt_add").click(function(){
-            window.location.href='?r=user-stu-new&checkvalue=<?php echo $db_name ?>&from=dorlist';
+            window.location.href='?r=user-stu-new&db_id_select=<?php echo $db_name ?>&from=dorlist';
         });
         $("#bt_del").click(function(){
             window.location.href='#';
