@@ -7,16 +7,16 @@
  */
 
 
-//Todo Add:1.搜索 2.新增 4.批量删除
+//Todo Add:1.搜索 2.新增宿舍 4.批量删除
 
 require 'inc/connect.php';//链接数据库
 require 'inc/checklogin.php';
 require 'tools/tool_database.php';
 
 ////修复Permission为-1时?r=list-dormitories仍可访问的问题
-//if ($user_permission != -1) {
-//    header("Location: ?r=permission-denied");
-//}
+if ($user_permission == -1) {
+    header("Location: ?r=permission-denied");
+}
 
 $db_id = $_GET["db_id"];
 $db_name = queryDorBuildNameById($db_id);
@@ -96,7 +96,9 @@ $dor_count = mysql_num_rows($dor_result);
                 <div class="am-u-sm-12 am-u-md-6" <?php if ($user_permission == -1) echo 'style="display: none;"' ?>>
                     <div class="am-btn-toolbar">
                         <div class="am-btn-group am-btn-group-xs">
-                            <button id="bt_add" type="button" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增
+                            <button id="bt_add_dor" type="button" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增宿舍
+                            </button>
+                            <button id="bt_add_stu" type="button" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增学生
                             </button>
                             </button>
                             <button id="bt_del" type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span>
@@ -253,11 +255,14 @@ $dor_count = mysql_num_rows($dor_result);
 <script type="text/javascript">
 
     $(function(){
-        $("#bt_add").click(function(){
-            window.location.href='?r=user-stu-new&db_id_select=<?php echo $db_name ?>&from=dorlist';
+        $("#bt_add_stu").click(function(){
+            window.location.href='?r=user-stu-new&db_name_select=<?php echo $db_name ?>&from=dorlist';
         });
         $("#bt_del").click(function(){
             window.location.href='#';
+        });
+        $("#bt_add_dor").click(function(){
+            window.location.href='?r=dor-new&db_id_select=<?php echo $db_id ?>&from=dorlist';
         });
     });
 </script>

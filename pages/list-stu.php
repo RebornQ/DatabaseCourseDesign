@@ -99,8 +99,8 @@ $stu_count_page = mysql_num_rows($stu_result_page);
                 <div class="am-u-sm-12 am-u-md-6" <?php if ($user_permission != 0) echo 'style="display: none;"' ?>>
                     <div class="am-btn-toolbar">
                         <div class="am-btn-group am-btn-group-xs">
-                            <button id="bt_add" type="button" class="am-btn am-btn-default"><span
-                                        class="am-icon-plus"></span> 新增
+                            <button id="bt_add_stu" type="button" class="am-btn am-btn-default"><span
+                                        class="am-icon-plus"></span> 新增学生
                             </button>
                             </button>
                             <button id="bt_del" type="button" class="am-btn am-btn-default"><span
@@ -282,8 +282,8 @@ $stu_count_page = mysql_num_rows($stu_result_page);
 
 <script type="text/javascript">
     $(function () {
-        $("#bt_add").click(function () {
-            window.location.href = '?r=user-stu-new&db_id_select=C1&from=stulist';
+        $("#bt_add_stu").click(function () {
+            window.location.href = '?r=user-stu-new&db_name_select=C1&from=stulist';
         });
         $("#bt_del").click(function () {
             //window.location.href = '?r=list-stu&delete_no=<?php //echo $students['s_no']?>//';

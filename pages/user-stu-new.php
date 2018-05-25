@@ -33,7 +33,7 @@ $stu_department = $_POST['user-department'];
 $stu_grade = $_POST['user-grade'];
 $stu_phone = $_POST['user-phone'];
 //$stu_dor_build = $_POST['user-dor-build'];
-$stu_dor_build = $_GET['db_id_select'];//修复当from=dorlist时，select的disable属性为disabled导致的$stu_dor_build为空，使得添加数据失败
+$stu_dor_build = $_GET['db_name_select'];//修复当from=dorlist时，select的disable属性为disabled导致的$stu_dor_build为空，使得添加数据失败
 $stu_dor = $_POST['user-dor'];
 $stu_bed = $_POST['user-bed'];
 $stu_dor_build_id = queryDorBuildIdByName($stu_dor_build);
@@ -46,9 +46,9 @@ $users_all_dor_build_query = "SELECT db_name,db_id FROM dormitory_builds ORDER B
 $users_all_dor_build_result = mysql_query($users_all_dor_build_query) or die ('SQL语句有误：' . mysql_error());
 $users_all_dor_build = mysql_fetch_array($users_all_dor_build_result);
 
-$dor_build_select_name = $_GET['db_id_select'];
-$dor_build_select_id = "1";
 // 查询 该楼的所有宿舍号
+$dor_build_select_name = $_GET['db_name_select'];
+$dor_build_select_id = "1";
 if (isset($dor_build_select_name)) {
     $dor_build_select_id = queryDorBuildIdByName($dor_build_select_name);
     $dor_list_query = "SELECT d_name FROM dormitories WHERE db_id='$dor_build_select_id'";
@@ -124,9 +124,9 @@ $result_bed_details_now = mysql_query("SELECT s_no FROM students WHERE s_bed='$s
 
                         <script>
                             function request(id) {
-                                // var data = {db_id_select: document.getElementById(id).value};
+                                // var data = {db_name_select: document.getElementById(id).value};
                                 var data = document.getElementById(id).value;
-                                window.location.href = "?r=user-stu-new" + "&db_id_select=" + data + "&from=<?php echo $page_from?>";
+                                window.location.href = "?r=user-stu-new" + "&db_name_select=" + data + "&from=<?php echo $page_from?>";
 
                             }
 
@@ -141,7 +141,7 @@ $result_bed_details_now = mysql_query("SELECT s_no FROM students WHERE s_bed='$s
                                     paraObj[j.substring(0, j.indexOf("=")).toLowerCase()] = j.substring(j.indexOf("=") + 1, j.length);
                                 }
                                 // console.log(paraObj);
-                                var returnValue = paraObj['db_id_select'];
+                                var returnValue = paraObj['db_name_select'];
                                 // console.log(returnValue);
                                 setSelectChecked('user-dor-build', returnValue);
                                 // if (typeof(returnValue) == "undefined") {

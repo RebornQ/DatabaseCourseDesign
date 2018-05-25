@@ -88,7 +88,13 @@ $user_stu_current_dor_build_query = "SELECT dormitory_builds.db_name, dormitory_
 $user_stu_current_dor_build_result = mysql_query($user_stu_current_dor_build_query) or die ('SQL语句有误：' . mysql_error());
 $user_stu_current_dor_build = mysql_fetch_array($user_stu_current_dor_build_result);
 // 查询 该楼的所有宿舍号
-$dor_list_query = "SELECT d_name FROM dormitories WHERE db_id='{$user_stu_current_dor_build['db_id']}'";
+$dor_build_select_name = $_GET['db_name_select'];
+$dor_build_select_id = "1";
+if (isset($dor_build_select_name)) {
+    $dor_build_select_id = queryDorBuildIdByName($dor_build_select_name);
+    $dor_list_query = "SELECT d_name FROM dormitories WHERE db_id='$dor_build_select_id'";
+} else $dor_list_query = "SELECT d_name FROM dormitories WHERE db_id='{$user_stu_current_dor_build['db_id']}'";
+//$dor_list_query = "SELECT d_name FROM dormitories WHERE db_id='{$user_stu_current_dor_build['db_id']}'";
 $dor_list_result = mysql_query($dor_list_query) or die ('SQL语句有误：' . mysql_error());
 //$dor_list = mysql_fetch_array ($dor_list_result);
 // 查询 当前学生所在的宿舍号
@@ -298,15 +304,55 @@ if ($save != "") {
                             </div>
                         </div>
 
+                        <script>
+                            // 选中宿舍楼后输出该宿舍楼的所有宿舍给下一个select标签
+                            // ?r=user-stu&sno=20180218&edit_target=others
+                            function request(id) {
+                                // var data = {db_name_select: document.getElementById(id).value};
+                                var data = document.getElementById(id).value;
+                                window.location.href = "?r=user-stu"+ "&sno=<?php echo $sno?>" + "&edit_target=<?php echo $edit_target?>" + "&db_name_select=" + data;
+
+                            }
+
+                            // 在跳转的页面底部写上这些js
+                            window.onload = function () {
+                                // https://www.w3cschool.cn/lwp2e2/hqky12kg.html
+                                var url = location.href;
+                                var paraString = url.substring(url.indexOf("?") + 1, url.length).split("&");
+                                // console.log(paraString);
+                                var paraObj = {};
+                                for (i = 0; j = paraString[i]; i++) {
+                                    paraObj[j.substring(0, j.indexOf("=")).toLowerCase()] = j.substring(j.indexOf("=") + 1, j.length);
+                                }
+                                // console.log(paraObj);
+                                var returnValue = paraObj['db_name_select'];
+                                // console.log(returnValue);
+                                setSelectChecked('user-dor-build', returnValue);
+                                // if (typeof(returnValue) == "undefined") {
+                                //     return "";
+                                // } else {
+                                //     return returnValue;
+                                // }
+                            };
+                            function setSelectChecked(selectId, checkValue) {
+                                var select = document.getElementById(selectId);
+                                for (var i = 0; i < select.options.length; i++) {
+                                    if (select.options[i].innerHTML === checkValue) {
+                                        select.options[i].selected = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        </script>
                         <div class="am-form-group">
                             <label for="user-dor-build" class="am-u-sm-3 am-form-label">宿舍楼</label>
                             <div class="am-u-sm-9">
                                 <?php
                                 // 判断 用户权限，是否可编辑
                                 if ($user_permission == -1) {
-                                    echo "<select name='user-dor-build' disabled='disabled'>";
+                                    echo "<select name='user-dor-build' disabled='disabled' id='user-dor-build' onchange='request(this.id)'>";
                                 } else {
-                                    echo "<select name='user-dor-build'>";
+                                    echo "<select name='user-dor-build' id='user-dor-build' onchange='request(this.id)'>";
                                 }
                                 // 把 所有宿舍楼 遍历到数组中，输出
                                 while ($dor_builds = mysql_fetch_array($users_all_dor_builds_result)) {
