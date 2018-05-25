@@ -219,8 +219,8 @@ $dor_count = mysql_num_rows($dor_result);
                             </div>
                         </div>
                         <hr/>
-                        <p>注：该宿舍入住费为<?php $dors = mysql_fetch_array($dor_result);
-                            echo $dors['d_price']; ?>元/学期</p>
+                        <p><a>注：该宿舍入住费为<?php $dors = mysql_fetch_array($dor_result);
+                            echo $dors['d_price']; ?>元/学期</a></p>
                     </form>
                 </div>
 

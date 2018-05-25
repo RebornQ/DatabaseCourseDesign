@@ -245,7 +245,7 @@ $stu_count_page = mysql_num_rows($stu_result_page);
                             </div>
                         </div>
                         <hr/>
-                        <p>注：.....</p>
+                        <p><a>注：.....</a></p>
                     </form>
                 </div>
 
