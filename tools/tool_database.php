@@ -25,6 +25,15 @@ function queryDorBuildNameById($db_id)
     $db = mysql_fetch_array($db_result);
     return $db['db_name'];
 }
+
+function queryDorBuildPriceById($db_id)
+{
+    $dor_build_query = "SELECT d_price FROM dormitory_builds WHERE db_id=$db_id ORDER BY db_id";
+    $dor_build_result = mysql_query($dor_build_query) or die ('SQL语句有误：' . mysql_error());
+    $dor_build = mysql_fetch_array($dor_build_result);
+    return $dor_build['d_price'];
+}
+
 function queryDorIdByDorBuildIdAndDorName($dor_build_id,$d_name)
 {
     $d_query = "SELECT d_id FROM dormitories WHERE d_name=$d_name AND db_id=$dor_build_id";// 检索记录行 $start_from - ($start_from+15)

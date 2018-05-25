@@ -75,7 +75,7 @@ $result_bed_details_now = mysql_query("SELECT s_no FROM students WHERE s_bed='$s
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>个人资料</title>
+    <title>新增学生</title>
     <meta name="description" content="这是一个 user 页面">
     <meta name="keywords" content="user">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -109,8 +109,8 @@ $result_bed_details_now = mysql_query("SELECT s_no FROM students WHERE s_bed='$s
     <div class="admin-content">
         <div class="admin-content-body">
             <div class="am-cf am-padding am-padding-bottom-0">
-                <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">新增</strong> /
-                    <small>New Person</small>
+                <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">新增学生</strong> /
+                    <small>New Student</small>
                 </div>
             </div>
 
