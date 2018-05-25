@@ -7,16 +7,32 @@
  */
 
 
-//Todo Add:1.搜索 2.新增 4.批量删除
+//Todo Add:1.搜索 2.新增 4.(批量)删除
 
 require 'inc/connect.php';//链接数据库
 require 'inc/checklogin.php';
+include 'tools/tool_database.php';
 
 ////修复Permission为-1或1时?r=list-stu仍可访问的问题
 //if ($user_permission != 0) {
 //    header("Location: ?r=permission-denied");
 //}
 
+$delete_no = $_GET ['delete_no'];
+if ($delete_no != "") {
+    if ($user_permission != 0) {
+        echo "<script>alert('权限不足！！');location.href='?r=list-stu';</script>";
+        exit();
+    }
+    $dor_num_now_id = queryDorStuNumNowAndIdByUserNo($delete_no);
+    $dor_num_now = $dor_num_now_id['d_stu_num_now'] - 1;
+    mysql_query ( "UPDATE dormitories SET d_stu_num_now='$dor_num_now' WHERE d_id='{$dor_num_now_id['d_id']}'" ) or die ('SQL语句有误：' . mysql_error());
+    $delete_query1 = "DELETE FROM students WHERE s_no='$delete_no'";
+    $delete_query2 = "DELETE FROM users WHERE u_no='$delete_no'";
+    mysql_query($delete_query1) or die ('删除错误' . mysql_error());
+    mysql_query($delete_query2) or die ('删除错误' . mysql_error());
+    echo "<script>alert('学号为 " . $delete_no . "的学生已删除');location.href='?r=list-stu';</script>";
+}
 
 //分页：http://www.runoob.com/w3cnote/php-mysql-pagination.html
 $num_rec_per_page = 10;   // 每页显示数量
@@ -83,10 +99,12 @@ $stu_count_page = mysql_num_rows($stu_result_page);
                 <div class="am-u-sm-12 am-u-md-6" <?php if ($user_permission != 0) echo 'style="display: none;"' ?>>
                     <div class="am-btn-toolbar">
                         <div class="am-btn-group am-btn-group-xs">
-                            <button id="bt_add" type="button" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增
+                            <button id="bt_add" type="button" class="am-btn am-btn-default"><span
+                                        class="am-icon-plus"></span> 新增
                             </button>
                             </button>
-                            <button id="bt_del" type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span>
+                            <button id="bt_del" type="button" class="am-btn am-btn-default"><span
+                                        class="am-icon-trash-o"></span>
                                 批量删除
                             </button>
                         </div>
@@ -126,18 +144,23 @@ $stu_count_page = mysql_num_rows($stu_result_page);
                             <!--遍历学生-->
                             <?php
                             // 结果集遍历到数组
-                            while ( $students = mysql_fetch_array ( $stu_result_page ) ) {
+                            while ($students = mysql_fetch_array($stu_result_page)) {
                                 ?>
                                 <tr>
                                     <td><input type="checkbox"/></td>
-                                    <!--                                <td>--><?php //echo $students['s_id']?><!--</td>-->
-                                    <td><?php echo $students['s_no']?></td>
-                                    <td><a href="?r=user-stu&sno=<?php echo $students['s_no']?>&edit_target=<?php if ($students['s_no'] == $user_no) echo "self"; else echo "others"; ?>"><?php echo $students['u_name']?></a></td>
-                                    <td><?php echo $students['s_sex']?></td>
-                                    <td><?php echo $students['s_age']?></td>
-                                    <td><span class="am-badge am-badge-success"><?php echo $students['s_department']?></span></td>
-                                    <td><?php echo $students['s_grade']?></td>
-                                    <td><?php echo $students['s_phone']?></td>
+                                    <!--                                <td>-->
+                                    <?php //echo $students['s_id']?><!--</td>-->
+                                    <td><?php echo $students['s_no'] ?></td>
+                                    <td>
+                                        <a href="?r=user-stu&sno=<?php echo $students['s_no'] ?>&edit_target=<?php if ($students['s_no'] == $user_no) echo "self"; else echo "others"; ?>"><?php echo $students['u_name'] ?></a>
+                                    </td>
+                                    <td><?php echo $students['s_sex'] ?></td>
+                                    <td><?php echo $students['s_age'] ?></td>
+                                    <td>
+                                        <span class="am-badge am-badge-success"><?php echo $students['s_department'] ?></span>
+                                    </td>
+                                    <td><?php echo $students['s_grade'] ?></td>
+                                    <td><?php echo $students['s_phone'] ?></td>
                                     <?php
                                     // 查询 当前学生所在的宿舍楼名
                                     $user_stu_current_dor_build_query = "SELECT dormitory_builds.db_name, dormitory_builds.db_id FROM dormitories,dormitory_builds WHERE dormitories.d_id='{$students['d_id']}' AND dormitories.db_id=dormitory_builds.db_id";
@@ -148,9 +171,11 @@ $stu_count_page = mysql_num_rows($stu_result_page);
                                     $users_stu_current_dor_result = mysql_query($users_stu_current_dor_query) or die ('SQL语句有误：' . mysql_error());
                                     $users_stu_current_dor = mysql_fetch_array($users_stu_current_dor_result);
                                     ?>
-                                    <td><span class="am-badge am-badge-secondary"><?php echo $user_stu_current_dor_build['db_name']?></span></td>
-                                    <td><?php echo $users_stu_current_dor['d_name']?></td>
-                                    <td><?php echo $students['s_bed']?></td>
+                                    <td>
+                                        <span class="am-badge am-badge-secondary"><?php echo $user_stu_current_dor_build['db_name'] ?></span>
+                                    </td>
+                                    <td><?php echo $users_stu_current_dor['d_name'] ?></td>
+                                    <td><?php echo $students['s_bed'] ?></td>
                                     <td>
                                         <div class="am-btn-toolbar">
                                             <div class="am-btn-group am-btn-group-xs">
@@ -159,11 +184,11 @@ $stu_count_page = mysql_num_rows($stu_result_page);
                                                         onclick="location.href='?r=user-stu&sno=<?php echo $students['s_no'] ?>&edit_target=<?php if ($students['s_no'] == $user_no) echo "self"; else echo "others"; ?>'">
                                                     <span class="am-icon-pencil-square-o"></span> <?php if ($students['s_no'] == $user_no || $user_permission == 0 || $user_permission == 1) echo "编辑"; else echo "查看"; ?>
                                                 </button>
-                                                <button class="am-btn am-btn-default am-btn-xs am-text-danger"
+                                                <a href="?r=list-stu&delete_no=<?php echo $students['s_no']?>"><button class="am-btn am-btn-default am-btn-xs am-text-danger"
                                                         type="button" <?php if ($user_permission != 0) echo 'style="display: none;"' ?>
-                                                        onclick="location.href='#'">
+                                                        onclick="return confirm('删除后无法恢复数据，是否继续？');">
                                                     <span class="am-icon-trash-o"></span> 删除
-                                                </button>
+                                                </button></a>
                                                 <!--am-hide-sm-only属性会使display:none失效-->
                                                 <!--<button class="am-btn am-btn-default am-btn-xs am-text-danger am-hide-sm-only"-->
                                                 <!--type="button" -->
@@ -174,7 +199,7 @@ $stu_count_page = mysql_num_rows($stu_result_page);
                                         </div>
                                     </td>
                                 </tr>
-                            <?php }?>
+                            <?php } ?>
                             </tbody>
                         </table>
                         <div class="am-cf">
@@ -251,18 +276,20 @@ $stu_count_page = mysql_num_rows($stu_result_page);
 <!--[if (gte IE 9)|!(IE)]><!-->
 <script src="assets/js/jquery.min.js"></script>
 <!--<![endif]-->
-<script type="text/javascript">
 
-    $(function(){
-        $("#bt_add").click(function(){
-            window.location.href='?r=user-stu-new&checkvalue=C1&from=stulist';
-        });
-        $("#bt_del").click(function(){
-            window.location.href='#';
-        });
-    });
-</script>
 <script src="assets/js/amazeui.min.js"></script>
 <script src="assets/js/app.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#bt_add").click(function () {
+            window.location.href = '?r=user-stu-new&checkvalue=C1&from=stulist';
+        });
+        $("#bt_del").click(function () {
+            //window.location.href = '?r=list-stu&delete_no=<?php //echo $students['s_no']?>//';
+        });
+    });
+
+</script>
 </body>
 </html>

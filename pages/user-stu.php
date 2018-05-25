@@ -7,6 +7,41 @@ $edit_target = $_GET['edit_target'];
 $sno = $_GET['sno'];
 //$uno = $_GET['uno'];
 
+$save = $_POST['save'];
+$u_no = $_POST['user-no'];
+$u_name = $_POST['user-name'];
+$u_password = $_POST['user-password'];
+$u_password_new = $_POST['user-password-new'];
+$u_password_repeat = $_POST['user-password-repeat'];
+$stu_sex = $_POST['user-sex'];
+$stu_age = $_POST['user-age'];
+$stu_department = $_POST['user-department'];
+$stu_grade = $_POST['user-grade'];
+$stu_phone = $_POST['user-phone'];
+$stu_dor_build = $_POST['user-dor-build'];
+$stu_dor = $_POST['user-dor'];
+$stu_bed = $_POST['user-bed'];
+$stu_dor_build_id = queryDorBuildIdByName($stu_dor_build);
+
+
+$delete_no = $sno;
+$isDelete = $_GET['isdelete'];
+
+if ($delete_no != "" && $isDelete == "true") {
+    if ($user_permission != 0) {
+        echo "<script>alert('权限不足！！');location.href='?r=list-stu';</script>";
+        exit();
+    }
+    $dor_num_now_id = queryDorStuNumNowAndIdByUserNo($delete_no);
+    $dor_num_now = $dor_num_now_id['d_stu_num_now'] - 1;
+    mysql_query("UPDATE dormitories SET d_stu_num_now='$dor_num_now' WHERE d_id='{$dor_num_now_id['d_id']}'") or die ('SQL语句有误：' . mysql_error());
+    $delete_query1 = "DELETE FROM students WHERE s_no='$delete_no'";
+    $delete_query2 = "DELETE FROM users WHERE u_no='$delete_no'";
+    mysql_query($delete_query1) or die ('删除错误' . mysql_error());
+    mysql_query($delete_query2) or die ('删除错误' . mysql_error());
+    echo "<script>alert('学号为 " . $delete_no . "的学生已删除');location.href='?r=list-stu';</script>";
+}
+
 $permission_read = "true";
 $permission_read = "readonly='$permission_read'";
 // 判断用户权限，赋予不同的标签权限
@@ -20,7 +55,7 @@ if ($edit_target == "self") {
         }
     }
 } else if ($edit_target == "others") {
-    if ($sno == ""|| ($user_permission == -1 && $sno != $user_no)) {
+    if ($sno == "" || ($user_permission == -1 && $sno != $user_no)) {
         header("Location: ?r=permission-denied");
         exit();
 //        echo "<script>history.back()</script>";
@@ -68,21 +103,6 @@ $users_all_dor_builds_result = mysql_query($users_all_dor_builds_query) or die (
 //$users_all_dor_builds = mysql_fetch_array($users_all_dor_builds_result);
 
 
-$save = $_POST['save'];
-$u_no = $_POST['user-no'];
-$u_name = $_POST['user-name'];
-$u_password = $_POST['user-password'];
-$u_password_new = $_POST['user-password-new'];
-$u_password_repeat = $_POST['user-password-repeat'];
-$stu_sex = $_POST['user-sex'];
-$stu_age = $_POST['user-age'];
-$stu_department = $_POST['user-department'];
-$stu_grade = $_POST['user-grade'];
-$stu_phone = $_POST['user-phone'];
-$stu_dor_build = $_POST['user-dor-build'];
-$stu_dor = $_POST['user-dor'];
-$stu_bed = $_POST['user-bed'];
-$stu_dor_build_id = queryDorBuildIdByName($stu_dor_build);
 /* 修改 信息 */
 if ($save != "") {
 
@@ -376,8 +396,12 @@ if ($save != "") {
                         <div class="am-form-group">
                             <div class="am-u-sm-9 am-u-sm-push-3">
                                 <!--                                <button type="submit" name="submit" value="yes" class="am-btn am-btn-primary">保存修改</button>-->
-                                <input type="submit" name="save" value="保存修改" class="am-btn am-btn-primary" <?php if ($edit_target == "others" && $user_permission != -1) echo ""; else echo $permission_show ?>>
-                                <input type="submit" name="del" value="删除用户? " class="am-btn am-btn-default am-btn-sm am-fr" <?php if ($edit_target == "others" && $user_permission == 0) echo ""; else echo $permission_show ?>>
+                                <input type="submit" name="save" value="保存修改"
+                                       class="am-btn am-btn-primary" <?php if ($edit_target == "others" && $user_permission != -1) echo ""; else echo $permission_show ?>>
+                                <a href="?r=user-stu&sno=<?php echo $sno ?>&edit_target=<?php echo $edit_target ?>&isdelete=true"><input
+                                            type="button" onclick="return confirm('删除后无法恢复数据，是否继续？');" name="del"
+                                            value="删除用户? "
+                                            class="am-btn am-btn-default am-btn-sm am-fr" <?php if ($edit_target == "others" && $user_permission == 0) echo ""; else echo $permission_show ?>></a>
                             </div>
                         </div>
                     </form>

@@ -3,10 +3,9 @@ require 'inc/connect.php';//链接数据库
 require 'inc/checklogin.php';
 include 'tools/tool_database.php';
 
-session_start();
-$edit_target = $_GET['edit_target'];
 $page_from = $_GET['from'];
-$sno = $_GET['sno'];
+//$edit_target = $_GET['edit_target'];
+//$sno = $_GET['sno'];
 //$uno = $_GET['uno'];
 
 $permission_read = "true";

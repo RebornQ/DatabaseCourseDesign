@@ -33,6 +33,13 @@ function queryDorIdByDorBuildIdAndDorName($dor_build_id,$d_name)
     return $dor['d_name'];
 }
 
+function queryDorStuNumNowAndIdByUserNo($user_no)
+{
+    $dor_num_now_id_query = "SELECT d_id,d_stu_num_now FROM dormitories WHERE d_id=(SELECT d_id FROM students WHERE s_no='$user_no')";
+    $dor_num_now_id_result = mysql_query($dor_num_now_id_query) or die ('SQL语句有误：' . mysql_error());
+    $dor_num__id_now = mysql_fetch_array($dor_num_now_id_result);
+    return $dor_num__id_now;
+}
 /**
  * 用户相关查询
  */
