@@ -47,7 +47,7 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
         <div class="admin-content-body">
             <div class="am-cf am-padding">
                 <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">首页</strong> /
-                    <small>最新消息</small>
+                    <small>最新动态</small>
                 </div>
             </div>
 
@@ -78,6 +78,7 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
                             <th>宿舍楼</th>
                             <th>宿舍号</th>
                             <th>床号</th>
+                            <th>管理</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -109,10 +110,21 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
                                 <td><span class="am-badge am-badge-secondary"><?php echo $user_stu_current_dor_build['db_name']?></span></td>
                                 <td><?php echo $users_stu_current_dor['d_name']?></td>
                                 <td><?php echo $students['s_bed']?></td>
+                                <td>
+                                    <div class="am-dropdown" data-am-dropdown>
+                                        <button class="am-btn am-btn-default am-btn-xs am-dropdown-toggle" data-am-dropdown-toggle><span class="am-icon-cog"></span> <span class="am-icon-caret-down"></span></button>
+                                        <ul class="am-dropdown-content">
+                                            <li><a href="?r=user-stu&sno=<?php echo $students['s_no'] ?>&edit_target=<?php if ($students['s_no'] == $user_no) echo "self"; else echo "others"; ?>">1. 编辑</a></li>
+                                            <li><a href="#">2. 删除</a></li>
+                                        </ul>
+                                    </div>
+                                </td>
                             </tr>
                         <?php }?>
                         </tbody>
                     </table>
+                    <hr/>
+                    <p><a>注：当前显示最新添加的15位学生</a></p>
                 </div>
             </div>
         </div>

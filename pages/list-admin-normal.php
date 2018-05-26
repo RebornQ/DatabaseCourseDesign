@@ -7,7 +7,7 @@
  */
 
 
-//Todo Add:1.搜索 2.新增 4.批量删除
+//Todo Add:1.搜索 2.新增 3.批量删除
 
 require 'inc/connect.php';//链接数据库
 require 'inc/checklogin.php';

@@ -7,7 +7,7 @@
  */
 
 
-//Todo Add:1.搜索 2.新增 4.(批量)删除
+//Todo Add:1.搜索 2.(批量)删除
 
 require 'inc/connect.php';//链接数据库
 require 'inc/checklogin.php';
@@ -44,7 +44,7 @@ if (isset($_GET["page"])) {
 $start_from = ($page - 1) * $num_rec_per_page;
 
 //分页查询学生记录
-$stu_query_page = "SELECT students.*,users.u_name FROM students,users WHERE s_no=u_no AND u_permission=-1 ORDER BY s_id LIMIT {$start_from}, {$num_rec_per_page}";// 检索记录行 $start_from - ($start_from+15)
+$stu_query_page = "SELECT students.*,users.u_name FROM students,users WHERE s_no=u_no AND u_permission=-1 ORDER BY s_no LIMIT {$start_from}, {$num_rec_per_page}";// 检索记录行 $start_from - ($start_from+15)
 $stu_result_page = mysql_query($stu_query_page) or die ('SQL语句有误：' . mysql_error());
 $stu_count_page = mysql_num_rows($stu_result_page);
 

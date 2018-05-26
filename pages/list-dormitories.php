@@ -7,7 +7,7 @@
  */
 
 
-//Todo Add:1.搜索 2.新增宿舍 4.批量删除
+//Todo Add:1.搜索 2.批量删除
 
 require 'inc/connect.php';//链接数据库
 require 'inc/checklogin.php';
@@ -36,7 +36,7 @@ $start_from = ($page - 1) * $num_rec_per_page;
 //$dor_count_page = mysql_num_rows($dor_result_page);
 
 // 分页只查询宿舍记录
-$dor_single_query_page = "SELECT * FROM dormitories WHERE db_id=$db_id ORDER BY d_id LIMIT {$start_from}, {$num_rec_per_page}";
+$dor_single_query_page = "SELECT * FROM dormitories WHERE db_id=$db_id ORDER BY d_name LIMIT {$start_from}, {$num_rec_per_page}";
 $dor_single_result_page = mysql_query($dor_single_query_page) or die ('SQL语句有误：' . mysql_error());
 $dor_single_count_page = mysql_num_rows($dor_single_result_page);
 
@@ -195,27 +195,27 @@ $dor_count = mysql_num_rows($dor_result);
                                     <?php
                                     $total_records = $dor_count;  // 统计总共的记录条数
                                     $total_pages = ceil($total_records / $num_rec_per_page);  // 计算总页数
-                                    echo "<li><a href='?r=list-stu&page=1'>" . '|<' . "</a></li>"; // 第一页
+                                    echo "<li><a href='?r=list-dormitories&db_id=$db_id&page=1'>" . '|<' . "</a></li>"; // 第一页
                                     $page_forward = $page - 1;
                                     if ($page_forward > 0) {
-                                        echo "<li><a href='?r=list-stu&page=$page_forward'>«</a></li>";
+                                        echo "<li><a href='?r=list-dormitories&db_id=$db_id&page=$page_forward'>«</a></li>";
                                     } else {
-                                        echo "<li class=\"am-disabled\"><a href='?r=list-stu&page=$page_forward'>«</a></li>";
+                                        echo "<li class=\"am-disabled\"><a href='?r=list-dormitories&db_id=$db_id&page=$page_forward'>«</a></li>";
                                     }
                                     for ($i = 1; $i <= $total_pages; $i++) {
                                         $page_current = "page_current$i";
-                                        echo "<li id='$page_current'><a href='?r=list-stu&page=" . $i . "'>" . $i . "</a></li> ";
+                                        echo "<li id='$page_current'><a href='?r=list-dormitories&db_id=$db_id&page=" . $i . "'>" . $i . "</a></li> ";
                                         if ($page == $i) {
                                             echo "<script>document.getElementById('page_current$i').className='am-active'</script>";
                                         }
                                     };
                                     $page_next = $page + 1;
                                     if ($page_next <= $total_pages) {
-                                        echo "<li><a href='?r=list-stu&page={$page_next}'>»</a></li>";
+                                        echo "<li><a href='?r=list-dormitories&db_id=$db_id&page={$page_next}'>»</a></li>";
                                     } else {
-                                        echo "<li class=\"am-disabled\"><a href='?r=list-stu&page=$page_next'>»</a></li>";
+                                        echo "<li class=\"am-disabled\"><a href='?r=list-dormitories&db_id=$db_id&page=$page_next'>»</a></li>";
                                     }
-                                    echo "<li><a href='?r=list-stu&page=$total_pages'>" . '>|' . "</li> "; // 最后一页
+                                    echo "<li><a href='?r=list-dormitories&db_id=$db_id&page=$total_pages'>" . '>|' . "</li> "; // 最后一页
                                     ?>
                                 </ul>
                             </div>
