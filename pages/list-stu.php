@@ -39,7 +39,7 @@ if ($isSearch == 'true' && $keywords != "") {
     $stu_query_page = "SELECT students.*,users.u_name FROM students,users WHERE s_no=u_no AND u_permission=-1 AND (s_no LIKE '%$keywords%' OR u_name LIKE '%$keywords%') ORDER BY s_no LIMIT {$start_from}, {$num_rec_per_page}";
     // 查询所有搜索到的学生记录
     $student_result_search = mysql_query("SELECT students.*,users.u_name FROM students,users WHERE s_no=u_no AND u_permission=-1 AND (s_no LIKE '%$keywords%' OR u_name LIKE '%$keywords%') ORDER BY s_no") or die ('SQL语句有误：' . mysql_error());
-    $students_count = mysql_num_rows($student_result_search);
+    $students_count_search = mysql_num_rows($student_result_search);
 }
 
 $stu_result_page = mysql_query($stu_query_page) or die ('SQL语句有误：' . mysql_error());
@@ -202,6 +202,10 @@ $stu_result_page = mysql_query($stu_query_page) or die ('SQL语句有误：' . m
                             </tbody>
                         </table>
                         <div class="am-cf">
+                            <?php
+                            // 修复搜索后下方显示搜素记录数不变以及搜索结果页数不正确的问题
+                            if ($isSearch == 'true' && $keywords != "") $students_count = $students_count_search;
+                            ?>
                             共 <?php echo $students_count ?> 条记录
                             <?php
                             if ($start_from + $num_rec_per_page > $students_count) {
