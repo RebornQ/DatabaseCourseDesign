@@ -7,7 +7,7 @@
  */
 
 
-//Todo Add:1.搜索 2.(批量)删除
+//Todo Add: 1.(批量)删除
 
 require 'inc/connect.php';//链接数据库
 require 'inc/checklogin.php';
@@ -18,7 +18,7 @@ include 'tools/tool_database.php';
 //    header("Location: ?r=permission-denied");
 //}
 
-//分页：http://www.runoob.com/w3cnote/php-mysql-pagination.html
+// 分页：http://www.runoob.com/w3cnote/php-mysql-pagination.html
 $num_rec_per_page = 10;   // 每页显示数量
 if (isset($_GET["page"])) {
     $page = $_GET["page"];
@@ -27,11 +27,19 @@ if (isset($_GET["page"])) {
 };
 $start_from = ($page - 1) * $num_rec_per_page;
 
-//分页查询学生记录
+// 分页查询学生记录
 $stu_query_page = "SELECT students.*,users.u_name FROM students,users WHERE s_no=u_no AND u_permission=-1 ORDER BY s_no LIMIT {$start_from}, {$num_rec_per_page}";// 检索记录行 $start_from - ($start_from+15)
+
+// 搜索：https://segmentfault.com/a/1190000008063719 <-- mysql模糊查询LIKE
+// mysql条件查询and or使用实例：http://www.manongjc.com/article/1439.html
+$isSearch = $_GET['issearch'];
+$keywords = $_POST['keywords'];
+if ($isSearch == 'true' && $keywords != "") {
+    $stu_query_page = "SELECT students.*,users.u_name FROM students,users WHERE s_no=u_no AND u_permission=-1 AND (s_no LIKE '%$keywords%' OR u_name LIKE '%$keywords%') ORDER BY s_no LIMIT {$start_from}, {$num_rec_per_page}";
+}
+
 $stu_result_page = mysql_query($stu_query_page) or die ('SQL语句有误：' . mysql_error());
 $stu_count_page = mysql_num_rows($stu_result_page);
-
 ?>
 
 <!doctype html>
@@ -39,7 +47,7 @@ $stu_count_page = mysql_num_rows($stu_result_page);
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>学生列表</title>
+    <title><?php if ($isSearch == 'true') echo '搜索结果'; else echo '学生列表'; ?></title>
     <meta name="description" content="这是一个 table 页面">
     <meta name="keywords" content="table">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -72,8 +80,10 @@ $stu_count_page = mysql_num_rows($stu_result_page);
     <div class="admin-content">
         <div class="admin-content-body">
             <div class="am-cf am-padding am-padding-bottom-0">
-                <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">学生列表</strong> /
-                    <small>Students</small>
+                <div class="am-fl am-cf"><strong
+                            class="am-text-primary am-text-lg"><?php if ($isSearch == 'true') echo '搜索结果'; else echo '学生列表'; ?></strong>
+                    /
+                    <small><?php if ($isSearch == 'true') echo 'Search Results'; else echo 'Students'; ?></small>
                 </div>
             </div>
 
@@ -94,12 +104,11 @@ $stu_count_page = mysql_num_rows($stu_result_page);
                         </div>
                     </div>
                 </div>
+
                 <div class="am-u-sm-12 am-u-md-3">
                     <div class="am-input-group am-input-group-sm">
-                        <input type="text" class="am-form-field">
-                        <span class="am-input-group-btn">
-            <button class="am-btn am-btn-default" type="button">搜索</button>
-          </span>
+                        <input type="text" class="am-form-field" id="search-keywords" placeholder="请输入学号或姓名">
+                        <span class="am-input-group-btn"><button class="am-btn am-btn-default" type="button" id="bt_search">搜索</button></span>
                     </div>
                 </div>
             </div>
@@ -168,11 +177,13 @@ $stu_count_page = mysql_num_rows($stu_result_page);
                                                         onclick="location.href='?r=user-stu&sno=<?php echo $students['s_no'] ?>&edit_target=<?php if ($students['s_no'] == $user_no) echo "self"; else echo "others"; ?>'">
                                                     <span class="am-icon-pencil-square-o"></span> <?php if ($students['s_no'] == $user_no || $user_permission == 0 || $user_permission == 1) echo "编辑"; else echo "查看"; ?>
                                                 </button>
-                                                <a href="?r=user-delete&delete_no=<?php echo $students['s_no'] ?>&isdelete=true&from=list-stu"><button class="am-btn am-btn-default am-btn-xs am-text-danger"
-                                                        type="button" <?php if ($user_permission != 0) echo 'style="display: none;"' ?>
-                                                        onclick="return confirm('删除后无法恢复数据，是否继续？');">
-                                                    <span class="am-icon-trash-o"></span> 删除
-                                                </button></a>
+                                                <a href="?r=user-delete&delete_no=<?php echo $students['s_no'] ?>&isdelete=true&from=list-stu">
+                                                    <button class="am-btn am-btn-default am-btn-xs am-text-danger"
+                                                            type="button" <?php if ($user_permission != 0) echo 'style="display: none;"' ?>
+                                                            onclick="return confirm('删除后无法恢复数据，是否继续？');">
+                                                        <span class="am-icon-trash-o"></span> 删除
+                                                    </button>
+                                                </a>
                                                 <!--am-hide-sm-only属性会使display:none失效-->
                                                 <!--<button class="am-btn am-btn-default am-btn-xs am-text-danger am-hide-sm-only"-->
                                                 <!--type="button" -->
@@ -203,27 +214,52 @@ $stu_count_page = mysql_num_rows($stu_result_page);
                                     <?php
                                     $total_records = $students_count;  // 统计总共的记录条数
                                     $total_pages = ceil($total_records / $num_rec_per_page);  // 计算总页数
-                                    echo "<li><a href='?r=list-stu&page=1'>" . '|<' . "</a></li>"; // 第一页
-                                    $page_forward = $page - 1;
-                                    if ($page_forward > 0) {
-                                        echo "<li><a href='?r=list-stu&page=$page_forward'>«</a></li>";
-                                    } else {
-                                        echo "<li class=\"am-disabled\"><a href='?r=list-stu&page=$page_forward'>«</a></li>";
-                                    }
-                                    for ($i = 1; $i <= $total_pages; $i++) {
-                                        $page_current = "page_current$i";
-                                        echo "<li id='$page_current'><a href='?r=list-stu&page=" . $i . "'>" . $i . "</a></li> ";
-                                        if ($page == $i) {
-                                            echo "<script>document.getElementById('page_current$i').className='am-active'</script>";
+                                    if ($isSearch == 'true' && $keywords != "") {
+                                        echo "<li><a href='?r=list-stu&issearch=true&page=1'>" . '|<' . "</a></li>"; // 第一页搜索结果
+                                        $page_forward = $page - 1;
+                                        if ($page_forward > 0) {
+                                            echo "<li><a href='?r=list-stu&issearch=true&page=$page_forward'>«</a></li>";
+                                        } else {
+                                            echo "<li class=\"am-disabled\"><a href='?r=list-stu&issearch=true&page=$page_forward'>«</a></li>";
                                         }
-                                    };
-                                    $page_next = $page + 1;
-                                    if ($page_next <= $total_pages) {
-                                        echo "<li><a href='?r=list-stu&page={$page_next}'>»</a></li>";
+                                        for ($i = 1; $i <= $total_pages; $i++) {
+                                            $page_current = "page_current$i";
+                                            echo "<li id='$page_current'><a href='?r=list-stu&issearch=true&page=" . $i . "'>" . $i . "</a></li> ";
+                                            if ($page == $i) {
+                                                echo "<script>document.getElementById('page_current$i').className='am-active'</script>";
+                                            }
+                                        };
+                                        $page_next = $page + 1;
+                                        if ($page_next <= $total_pages) {
+                                            echo "<li><a href='?r=list-stu&issearch=true&page={$page_next}'>»</a></li>";
+                                        } else {
+                                            echo "<li class=\"am-disabled\"><a href='?r=list-stu&issearch=true&page=$page_next'>»</a></li>";
+                                        }
+                                        echo "<li><a href='?r=list-stu&issearch=true&page=$total_pages'>" . '>|' . "</li> "; // 最后一页搜索结果
                                     } else {
-                                        echo "<li class=\"am-disabled\"><a href='?r=list-stu&page=$page_next'>»</a></li>";
+                                        echo "<li><a href='?r=list-stu&page=1'>" . '|<' . "</a></li>"; // 第一页
+                                        $page_forward = $page - 1;
+                                        if ($page_forward > 0) {
+                                            echo "<li><a href='?r=list-stu&page=$page_forward'>«</a></li>";
+                                        } else {
+                                            echo "<li class=\"am-disabled\"><a href='?r=list-stu&page=$page_forward'>«</a></li>";
+                                        }
+                                        for ($i = 1; $i <= $total_pages; $i++) {
+                                            $page_current = "page_current$i";
+                                            echo "<li id='$page_current'><a href='?r=list-stu&page=" . $i . "'>" . $i . "</a></li> ";
+                                            if ($page == $i) {
+                                                echo "<script>document.getElementById('page_current$i').className='am-active'</script>";
+                                            }
+                                        };
+                                        $page_next = $page + 1;
+                                        if ($page_next <= $total_pages) {
+                                            echo "<li><a href='?r=list-stu&page={$page_next}'>»</a></li>";
+                                        } else {
+                                            echo "<li class=\"am-disabled\"><a href='?r=list-stu&page=$page_next'>»</a></li>";
+                                        }
+                                        echo "<li><a href='?r=list-stu&page=$total_pages'>" . '>|' . "</li> "; // 最后一页
                                     }
-                                    echo "<li><a href='?r=list-stu&page=$total_pages'>" . '>|' . "</li> "; // 最后一页
+
                                     ?>
                                 </ul>
                             </div>
@@ -265,6 +301,32 @@ $stu_count_page = mysql_num_rows($stu_result_page);
 <script src="assets/js/app.js"></script>
 
 <script type="text/javascript">
+
+    // js模拟表单post方式提交：https://blog.csdn.net/Inuyasha1121/article/details/40888831
+    function postCall( url, params, target){
+        var tempform = document.createElement("form");
+        tempform.action = url;
+        tempform.method = "post";
+        tempform.style.display="none"
+        if(target) {
+            tempform.target = target;
+        }
+
+        for (var x in params) {
+            var opt = document.createElement("input");
+            opt.name = x;
+            opt.value = params[x];
+            tempform.appendChild(opt);
+        }
+
+        var opt = document.createElement("input");
+        opt.type = "submit";
+        tempform.appendChild(opt);
+        document.body.appendChild(tempform);
+        tempform.submit();
+        document.body.removeChild(tempform);
+    }
+
     $(function () {
         $("#bt_add_stu").click(function () {
             window.location.href = '?r=user-stu-new&db_name_select=C1&from=stulist';
@@ -272,8 +334,11 @@ $stu_count_page = mysql_num_rows($stu_result_page);
         $("#bt_del").click(function () {
             //window.location.href = '?r=user-delete&delete_no=<?php //echo $students['s_no'] ?>//&isdelete=true&from=index';
         });
+        $("#bt_search").click(function(){
+            var keyword = $("#search-keywords").val();
+            postCall('?r=list-stu&issearch=true', {keywords : keyword });
+        });
     });
-
 </script>
 </body>
 </html>
