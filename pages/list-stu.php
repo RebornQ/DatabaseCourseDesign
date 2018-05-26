@@ -112,7 +112,8 @@ $stu_result_page = mysql_query($stu_query_page) or die ('SQL语句有误：' . m
                 <div class="am-u-sm-12 am-u-md-3">
                     <div class="am-input-group am-input-group-sm">
                         <input type="text" class="am-form-field" id="search-keywords" placeholder="请输入学号或姓名">
-                        <span class="am-input-group-btn"><button class="am-btn am-btn-default" type="button" id="bt_search">搜索</button></span>
+                        <span class="am-input-group-btn"><button class="am-btn am-btn-default" type="button"
+                                                                 id="bt_search">搜索</button></span>
                     </div>
                 </div>
             </div>
@@ -311,12 +312,12 @@ $stu_result_page = mysql_query($stu_query_page) or die ('SQL语句有误：' . m
 <script type="text/javascript">
 
     // js模拟表单post方式提交：https://blog.csdn.net/Inuyasha1121/article/details/40888831
-    function postCall( url, params, target){
+    function postCall(url, params, target) {
         var tempform = document.createElement("form");
         tempform.action = url;
         tempform.method = "post";
-        tempform.style.display="none"
-        if(target) {
+        tempform.style.display = "none"
+        if (target) {
             tempform.target = target;
         }
 
@@ -342,10 +343,16 @@ $stu_result_page = mysql_query($stu_query_page) or die ('SQL语句有误：' . m
         $("#bt_del").click(function () {
             //window.location.href = '?r=user-delete&delete_no=<?php //echo $students['s_no'] ?>//&isdelete=true&from=index';
         });
-        $("#bt_search").click(function(){
+        $("#bt_search").click(function () {
             var keyword = $("#search-keywords").val();
             // postCall('?r=list-stu&issearch=true', {keywords : keyword });
             window.location.href = '?r=list-stu&issearch=true&keywords=' + keyword;
+        });
+        // jQuery回车键绑定点击事件：https://blog.csdn.net/ww122081351/article/details/17757213
+        $(document).keydown(function (event) {
+            if (event.keyCode === 13) {
+                $("#bt_search").click();
+            }
         });
     });
 </script>
