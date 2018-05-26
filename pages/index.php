@@ -115,7 +115,7 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
                                         <button class="am-btn am-btn-default am-btn-xs am-dropdown-toggle" data-am-dropdown-toggle><span class="am-icon-cog"></span> <span class="am-icon-caret-down"></span></button>
                                         <ul class="am-dropdown-content">
                                             <li><a href="?r=user-stu&sno=<?php echo $students['s_no'] ?>&edit_target=<?php if ($students['s_no'] == $user_no) echo "self"; else echo "others"; ?>">1. 编辑</a></li>
-                                            <li><a href="#">2. 删除</a></li>
+                                            <li><a href="?r=user-delete&delete_no=<?php echo $students['s_no'] ?>&isdelete=true&from=index" onclick="return confirm('删除后无法恢复数据，是否继续？');">2. 删除</a></li>
                                         </ul>
                                     </div>
                                 </td>

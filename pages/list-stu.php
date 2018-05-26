@@ -18,22 +18,6 @@ include 'tools/tool_database.php';
 //    header("Location: ?r=permission-denied");
 //}
 
-$delete_no = $_GET ['delete_no'];
-if ($delete_no != "") {
-    if ($user_permission != 0) {
-        echo "<script>alert('权限不足！！');location.href='?r=list-stu';</script>";
-        exit();
-    }
-    $dor_num_now_id = queryDorStuNumNowAndIdByUserNo($delete_no);
-    $dor_num_now = $dor_num_now_id['d_stu_num_now'] - 1;
-    mysql_query ( "UPDATE dormitories SET d_stu_num_now='$dor_num_now' WHERE d_id='{$dor_num_now_id['d_id']}'" ) or die ('SQL语句有误：' . mysql_error());
-    $delete_query1 = "DELETE FROM students WHERE s_no='$delete_no'";
-    $delete_query2 = "DELETE FROM users WHERE u_no='$delete_no'";
-    mysql_query($delete_query1) or die ('删除错误' . mysql_error());
-    mysql_query($delete_query2) or die ('删除错误' . mysql_error());
-    echo "<script>alert('学号为 " . $delete_no . "的学生已删除');location.href='?r=list-stu';</script>";
-}
-
 //分页：http://www.runoob.com/w3cnote/php-mysql-pagination.html
 $num_rec_per_page = 10;   // 每页显示数量
 if (isset($_GET["page"])) {
@@ -184,7 +168,7 @@ $stu_count_page = mysql_num_rows($stu_result_page);
                                                         onclick="location.href='?r=user-stu&sno=<?php echo $students['s_no'] ?>&edit_target=<?php if ($students['s_no'] == $user_no) echo "self"; else echo "others"; ?>'">
                                                     <span class="am-icon-pencil-square-o"></span> <?php if ($students['s_no'] == $user_no || $user_permission == 0 || $user_permission == 1) echo "编辑"; else echo "查看"; ?>
                                                 </button>
-                                                <a href="?r=list-stu&delete_no=<?php echo $students['s_no']?>"><button class="am-btn am-btn-default am-btn-xs am-text-danger"
+                                                <a href="?r=user-delete&delete_no=<?php echo $students['s_no'] ?>&isdelete=true&from=list-stu"><button class="am-btn am-btn-default am-btn-xs am-text-danger"
                                                         type="button" <?php if ($user_permission != 0) echo 'style="display: none;"' ?>
                                                         onclick="return confirm('删除后无法恢复数据，是否继续？');">
                                                     <span class="am-icon-trash-o"></span> 删除
@@ -286,7 +270,7 @@ $stu_count_page = mysql_num_rows($stu_result_page);
             window.location.href = '?r=user-stu-new&db_name_select=C1&from=stulist';
         });
         $("#bt_del").click(function () {
-            //window.location.href = '?r=list-stu&delete_no=<?php //echo $students['s_no']?>//';
+            //window.location.href = '?r=user-delete&delete_no=<?php //echo $students['s_no'] ?>//&isdelete=true&from=index';
         });
     });
 

@@ -23,25 +23,6 @@ $stu_dor = $_POST['user-dor'];
 $stu_bed = $_POST['user-bed'];
 $stu_dor_build_id = queryDorBuildIdByName($stu_dor_build);
 
-
-$delete_no = $sno;
-$isDelete = $_GET['isdelete'];
-
-if ($delete_no != "" && $isDelete == "true") {
-    if ($user_permission != 0) {
-        echo "<script>alert('权限不足！！');location.href='?r=list-stu';</script>";
-        exit();
-    }
-    $dor_num_now_id = queryDorStuNumNowAndIdByUserNo($delete_no);
-    $dor_num_now = $dor_num_now_id['d_stu_num_now'] - 1;
-    mysql_query("UPDATE dormitories SET d_stu_num_now='$dor_num_now' WHERE d_id='{$dor_num_now_id['d_id']}'") or die ('SQL语句有误：' . mysql_error());
-    $delete_query1 = "DELETE FROM students WHERE s_no='$delete_no'";
-    $delete_query2 = "DELETE FROM users WHERE u_no='$delete_no'";
-    mysql_query($delete_query1) or die ('删除错误' . mysql_error());
-    mysql_query($delete_query2) or die ('删除错误' . mysql_error());
-    echo "<script>alert('学号为 " . $delete_no . "的学生已删除');location.href='?r=list-stu';</script>";
-}
-
 $permission_read = "true";
 $permission_read = "readonly='$permission_read'";
 // 判断用户权限，赋予不同的标签权限
@@ -444,7 +425,7 @@ if ($save != "") {
                                 <!--                                <button type="submit" name="submit" value="yes" class="am-btn am-btn-primary">保存修改</button>-->
                                 <input type="submit" name="save" value="保存修改"
                                        class="am-btn am-btn-primary" <?php if ($edit_target == "others" && $user_permission != -1) echo ""; else echo $permission_show ?>>
-                                <a href="?r=user-stu&sno=<?php echo $sno ?>&edit_target=<?php echo $edit_target ?>&isdelete=true"><input
+                                <a href="?r=user-delete&delete_no=<?php echo $sno ?>&isdelete=true&from=list-stu"><input
                                             type="button" onclick="return confirm('删除后无法恢复数据，是否继续？');" name="del"
                                             value="删除用户? "
                                             class="am-btn am-btn-default am-btn-sm am-fr" <?php if ($edit_target == "others" && $user_permission == 0) echo ""; else echo $permission_show ?>></a>
