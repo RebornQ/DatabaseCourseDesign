@@ -33,13 +33,17 @@ $stu_query_page = "SELECT students.*,users.u_name FROM students,users WHERE s_no
 // 搜索：https://segmentfault.com/a/1190000008063719 <-- mysql模糊查询LIKE
 // mysql条件查询and or使用实例：http://www.manongjc.com/article/1439.html
 $isSearch = $_GET['issearch'];
-$keywords = $_POST['keywords'];
+//$keywords = $_POST['keywords'];
+$keywords = $_GET['keywords'];
 if ($isSearch == 'true' && $keywords != "") {
     $stu_query_page = "SELECT students.*,users.u_name FROM students,users WHERE s_no=u_no AND u_permission=-1 AND (s_no LIKE '%$keywords%' OR u_name LIKE '%$keywords%') ORDER BY s_no LIMIT {$start_from}, {$num_rec_per_page}";
+    // 查询所有搜索到的学生记录
+    $student_result_search = mysql_query("SELECT students.*,users.u_name FROM students,users WHERE s_no=u_no AND u_permission=-1 AND (s_no LIKE '%$keywords%' OR u_name LIKE '%$keywords%') ORDER BY s_no") or die ('SQL语句有误：' . mysql_error());
+    $students_count = mysql_num_rows($student_result_search);
 }
 
 $stu_result_page = mysql_query($stu_query_page) or die ('SQL语句有误：' . mysql_error());
-$stu_count_page = mysql_num_rows($stu_result_page);
+//$stu_count_page = mysql_num_rows($stu_result_page);
 ?>
 
 <!doctype html>
@@ -215,27 +219,27 @@ $stu_count_page = mysql_num_rows($stu_result_page);
                                     $total_records = $students_count;  // 统计总共的记录条数
                                     $total_pages = ceil($total_records / $num_rec_per_page);  // 计算总页数
                                     if ($isSearch == 'true' && $keywords != "") {
-                                        echo "<li><a href='?r=list-stu&issearch=true&page=1'>" . '|<' . "</a></li>"; // 第一页搜索结果
+                                        echo "<li><a href='?r=list-stu&issearch=true&keywords=$keywords&page=1'>" . '|<' . "</a></li>"; // 第一页搜索结果
                                         $page_forward = $page - 1;
                                         if ($page_forward > 0) {
-                                            echo "<li><a href='?r=list-stu&issearch=true&page=$page_forward'>«</a></li>";
+                                            echo "<li><a href='?r=list-stu&issearch=true&keywords=$keywords&page=$page_forward'>«</a></li>";
                                         } else {
-                                            echo "<li class=\"am-disabled\"><a href='?r=list-stu&issearch=true&page=$page_forward'>«</a></li>";
+                                            echo "<li class=\"am-disabled\"><a href='?r=list-stu&issearch=true&keywords=$keywords&page=$page_forward'>«</a></li>";
                                         }
                                         for ($i = 1; $i <= $total_pages; $i++) {
                                             $page_current = "page_current$i";
-                                            echo "<li id='$page_current'><a href='?r=list-stu&issearch=true&page=" . $i . "'>" . $i . "</a></li> ";
+                                            echo "<li id='$page_current'><a href='?r=list-stu&issearch=true&keywords=$keywords&page=" . $i . "'>" . $i . "</a></li> ";
                                             if ($page == $i) {
                                                 echo "<script>document.getElementById('page_current$i').className='am-active'</script>";
                                             }
                                         };
                                         $page_next = $page + 1;
                                         if ($page_next <= $total_pages) {
-                                            echo "<li><a href='?r=list-stu&issearch=true&page={$page_next}'>»</a></li>";
+                                            echo "<li><a href='?r=list-stu&issearch=true&keywords=$keywords&page={$page_next}'>»</a></li>";
                                         } else {
-                                            echo "<li class=\"am-disabled\"><a href='?r=list-stu&issearch=true&page=$page_next'>»</a></li>";
+                                            echo "<li class=\"am-disabled\"><a href='?r=list-stu&issearch=true&keywords=$keywords&page=$page_next'>»</a></li>";
                                         }
-                                        echo "<li><a href='?r=list-stu&issearch=true&page=$total_pages'>" . '>|' . "</li> "; // 最后一页搜索结果
+                                        echo "<li><a href='?r=list-stu&issearch=true&keywords=$keywords&page=$total_pages'>" . '>|' . "</li> "; // 最后一页搜索结果
                                     } else {
                                         echo "<li><a href='?r=list-stu&page=1'>" . '|<' . "</a></li>"; // 第一页
                                         $page_forward = $page - 1;
@@ -336,7 +340,8 @@ $stu_count_page = mysql_num_rows($stu_result_page);
         });
         $("#bt_search").click(function(){
             var keyword = $("#search-keywords").val();
-            postCall('?r=list-stu&issearch=true', {keywords : keyword });
+            // postCall('?r=list-stu&issearch=true', {keywords : keyword });
+            window.location.href = '?r=list-stu&issearch=true&keywords=' + keyword;
         });
     });
 </script>
