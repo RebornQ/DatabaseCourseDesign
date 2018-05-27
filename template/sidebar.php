@@ -70,6 +70,11 @@ $dormitories_count = mysql_num_rows($dormitories_result);
                     </li>
                 </ul>
             </li>
+            <li <?php if ($user_permission != -1) echo 'style="display: none;"' ?>>
+                <a href="?r=list-dormitories&db_id=<?php $db = mysql_fetch_array(mysql_query("SELECT db_id FROM dormitories WHERE d_id=(SELECT d_id FROM students WHERE s_no=$user_no) ORDER BY d_id"));  echo $db['db_id']?>" class="am-cf"><span
+                            class="am-icon-file"></span> 我的宿舍<span
+                            class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a>
+            </li>
             <li class="admin-parent" <?php if ($user_permission == -1) echo 'style="display: none;"' ?>>
                 <a class="am-cf" data-am-collapse="{target: '#dormitory-nav'}"><span class="am-icon-calendar"></span>
                     宿舍管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
@@ -85,7 +90,8 @@ $dormitories_count = mysql_num_rows($dormitories_result);
                         <li><a href="?r=list-dormitories&db_id=<?php echo $dormitory_builds['db_id'] ?>"><span
                                         class="am-icon-table"></span> <?php echo $dormitory_builds['db_name'] ?>
                                 <span
-                                        class="am-badge am-badge-secondary am-margin-right am-fr">共<?php echo mysql_num_rows(mysql_query("SELECT dormitories.db_id FROM dormitories WHERE db_id={$dormitory_builds['db_id']} ORDER BY db_id ")) ?>个宿舍</span></a>
+                                        class="am-badge am-badge-secondary am-margin-right am-fr">共<?php echo mysql_num_rows(mysql_query("SELECT dormitories.db_id FROM dormitories WHERE db_id={$dormitory_builds['db_id']} ORDER BY db_id ")) ?>
+                                    个宿舍</span></a>
                         </li>
                     <?php } ?>
                 </ul>
@@ -96,7 +102,7 @@ $dormitories_count = mysql_num_rows($dormitories_result);
         <div class="am-panel am-panel-default admin-sidebar-panel">
             <div class="am-panel-bd">
                 <p><span class="am-icon-bookmark"></span> 公告</p>
-                <p>时光静好，与君语；细水流年，与君同。—— 来自最爱你们的宿管</p>
+                <p>时光静好，与君语；细水流年，与君同。—— 来自最爱你们的Seal</p>
             </div>
         </div>
         <!--        <div class="am-panel am-panel-default admin-sidebar-panel">-->

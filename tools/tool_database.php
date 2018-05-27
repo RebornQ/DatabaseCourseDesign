@@ -26,6 +26,14 @@ function queryDorBuildNameById($db_id)
     return $db['db_name'];
 }
 
+function queryDorBuildIdBySno($s_no)
+{
+    $db_query = "SELECT db_id FROM dormitories WHERE d_id=(SELECT d_id FROM students WHERE s_no=$s_no) ORDER BY d_id";// 检索记录行 $start_from - ($start_from+15)
+    $db_result = mysql_query($db_query) or die ('SQL语句有误：' . mysql_error());
+    $db = mysql_fetch_array($db_result);
+    return $db['db_name'];
+}
+
 function queryDorBuildPriceById($db_id)
 {
     $dor_build_query = "SELECT d_price FROM dormitory_builds WHERE db_id=$db_id ORDER BY db_id";
@@ -46,8 +54,8 @@ function queryDorStuNumNowAndIdByUserNo($user_no)
 {
     $dor_num_now_id_query = "SELECT d_id,d_stu_num_now FROM dormitories WHERE d_id=(SELECT d_id FROM students WHERE s_no='$user_no')";
     $dor_num_now_id_result = mysql_query($dor_num_now_id_query) or die ('SQL语句有误：' . mysql_error());
-    $dor_num__id_now = mysql_fetch_array($dor_num_now_id_result);
-    return $dor_num__id_now;
+    $dor_num_id_now = mysql_fetch_array($dor_num_now_id_result);
+    return $dor_num_id_now;
 }
 
 function queryIsDorExistByDorNameAndDorBuildId($db_id, $dor_name)
@@ -60,6 +68,18 @@ function queryIsDorExistByDorNameAndDorBuildId($db_id, $dor_name)
     }else return false;
 }
 
+function queryIsSameDorByUserNo($user_no_1, $user_no_2)
+{
+    $stu_query_1 = "SELECT d_id FROM students WHERE s_no=$user_no_1";
+    $stu_result_1 = mysql_query($stu_query_1) or die ('SQL语句有误：' . mysql_error());
+    $stu_1 = mysql_fetch_array($stu_result_1);
+    $stu_query_2 = "SELECT d_id FROM students WHERE s_no=$user_no_2";
+    $stu_result_2 = mysql_query($stu_query_2) or die ('SQL语句有误：' . mysql_error());
+    $stu_2 = mysql_fetch_array($stu_result_2);
+    if ($stu_1['d_id'] == $stu_2['d_id']) {
+        return true;
+    }else return false;
+}
 /**
  * 用户相关查询
  * @param $u_no

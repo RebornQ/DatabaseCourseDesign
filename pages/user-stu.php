@@ -5,6 +5,7 @@ include 'tools/tool_database.php';
 
 $edit_target = $_GET['edit_target'];
 $sno = $_GET['sno'];
+$target_no = $_GET['tno'];
 //$uno = $_GET['uno'];
 
 $save = $_POST['save'];
@@ -36,7 +37,11 @@ if ($edit_target == "self") {
         }
     }
 } else if ($edit_target == "others") {
-    if ($sno == "" || ($user_permission == -1 && $sno != $user_no)) {
+    if ($target_no == "" && $user_permission == -1) {
+        header("Location: ?r=permission-denied");
+        exit();
+    }
+    if ($sno == "" || ($user_permission == -1 && $sno != $user_no && !queryIsSameDorByUserNo($sno, $target_no))) {
         header("Location: ?r=permission-denied");
         exit();
 //        echo "<script>history.back()</script>";
@@ -291,7 +296,7 @@ if ($save != "") {
                             function request(id) {
                                 // var data = {db_name_select: document.getElementById(id).value};
                                 var data = document.getElementById(id).value;
-                                window.location.href = "?r=user-stu"+ "&sno=<?php echo $sno?>" + "&edit_target=<?php echo $edit_target?>" + "&db_name_select=" + data;
+                                window.location.href = "?r=user-stu" + "&sno=<?php echo $sno?>" + "&edit_target=<?php echo $edit_target?>" + "&db_name_select=" + data;
 
                             }
 
@@ -315,6 +320,7 @@ if ($save != "") {
                                 //     return returnValue;
                                 // }
                             };
+
                             function setSelectChecked(selectId, checkValue) {
                                 var select = document.getElementById(selectId);
                                 for (var i = 0; i < select.options.length; i++) {

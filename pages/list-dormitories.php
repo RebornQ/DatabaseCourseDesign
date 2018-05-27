@@ -14,9 +14,9 @@ require 'inc/checklogin.php';
 require 'tools/tool_database.php';
 
 ////修复Permission为-1时?r=list-dormitories仍可访问的问题
-if ($user_permission == -1) {
-    header("Location: ?r=permission-denied");
-}
+//if ($user_permission == -1) {
+//    header("Location: ?r=permission-denied");
+//}
 
 $db_id = $_GET["db_id"];
 $db_name = queryDorBuildNameById($db_id);
@@ -164,7 +164,7 @@ $dor_count = mysql_num_rows($dor_result);
                                         if ($dormitories_d['s_bed'] == $i) {
                                             $isSameDor = false;
                                             echo "<td align=\"center\"><a href=\"?r=user-stu&sno={$dormitories_d['s_no']}&edit_target=";
-                                            if ($dormitories_d['s_no'] == $user_no) echo "self"; else echo "others";
+                                            if ($dormitories_d['s_no'] == $user_no) echo "self"; else echo "others&tno=$user_no";
                                             echo "\">";
                                             echo queryNameByUno($dormitories_d['s_no']);
                                             echo "</a></td>";
