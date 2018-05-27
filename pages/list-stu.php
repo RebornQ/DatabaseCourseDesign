@@ -150,7 +150,7 @@ $stu_result_page = mysql_query($stu_query_page) or die ('SQL语句有误：' . m
                                     <?php //echo $students['s_id']?><!--</td>-->
                                     <td><?php echo $students['s_no'] ?></td>
                                     <td>
-                                        <a href="?r=user-stu&sno=<?php echo $students['s_no'] ?>&edit_target=<?php if ($students['s_no'] == $user_no) echo "self"; else echo "others"; ?>"><?php echo $students['u_name'] ?></a>
+                                        <a href="?r=user-stu&sno=<?php echo $students['s_no'] ?>&edit_target=<?php if ($students['s_no'] == $user_no) echo "self"; else if ($user_permission == -1) echo "others&tno=$user_no";else echo "others"; ?>"><?php echo $students['u_name'] ?></a>
                                     </td>
                                     <td><?php echo $students['s_sex'] ?></td>
                                     <td><?php echo $students['s_age'] ?></td>
@@ -179,7 +179,7 @@ $stu_result_page = mysql_query($stu_query_page) or die ('SQL语句有误：' . m
                                             <div class="am-btn-group am-btn-group-xs">
                                                 <button class="am-btn am-btn-default am-btn-xs am-text-secondary"
                                                         type="button"
-                                                        onclick="location.href='?r=user-stu&sno=<?php echo $students['s_no'] ?>&edit_target=<?php if ($students['s_no'] == $user_no) echo "self"; else echo "others"; ?>'">
+                                                        onclick="location.href='?r=user-stu&sno=<?php echo $students['s_no'] ?>&edit_target=<?php if ($students['s_no'] == $user_no) echo "self"; else if ($user_permission == -1) echo "others&tno=$user_no";else echo "others"; ?>'">
                                                     <span class="am-icon-pencil-square-o"></span> <?php if ($students['s_no'] == $user_no || $user_permission == 0 || $user_permission == 1) echo "编辑"; else echo "查看"; ?>
                                                 </button>
                                                 <a href="?r=user-delete&delete_no=<?php echo $students['s_no'] ?>&isdelete=true&from=list-stu">

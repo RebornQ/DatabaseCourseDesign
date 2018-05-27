@@ -164,7 +164,7 @@ $dor_count = mysql_num_rows($dor_result);
                                         if ($dormitories_d['s_bed'] == $i) {
                                             $isSameDor = false;
                                             echo "<td align=\"center\"><a href=\"?r=user-stu&sno={$dormitories_d['s_no']}&edit_target=";
-                                            if ($dormitories_d['s_no'] == $user_no) echo "self"; else echo "others&tno=$user_no";
+                                            if ($dormitories_d['s_no'] == $user_no) echo "self"; else if ($user_permission == -1) echo "others&tno=$user_no";else echo "others";
                                             echo "\">";
                                             echo queryNameByUno($dormitories_d['s_no']);
                                             echo "</a></td>";
