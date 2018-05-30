@@ -434,7 +434,7 @@ if ($save != "") {
                                 <a href="?r=user-delete&delete_no=<?php echo $sno ?>&isdelete=true&from=list-stu"><input
                                             type="button" onclick="return confirm('删除后无法恢复数据，是否继续？');" name="del"
                                             value="删除用户? "
-                                            class="am-btn am-btn-default am-btn-sm am-fr" <?php if ($edit_target == "others" && $user_permission == 0) echo ""; else echo $permission_show ?>></a>
+                                            class="am-btn am-btn-default am-btn-sm am-fr" <?php if ($edit_target == "others" && $user_permission == 0) echo ""; else echo "style=\"display: none;\"" ?>></a>
                             </div>
                         </div>
                     </form>
