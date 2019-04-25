@@ -22,7 +22,7 @@ $stu_phone = $_POST['user-phone'];
 $stu_dor_build = $_POST['user-dor-build'];
 $stu_dor = $_POST['user-dor'];
 $stu_bed = $_POST['user-bed'];
-$stu_dor_build_id = queryDorBuildIdByName($stu_dor_build);
+$stu_dor_build_id = queryDorBuildIdByName($conn,$stu_dor_build);
 
 $permission_read = "true";
 $permission_read = "readonly='$permission_read'";
@@ -41,7 +41,7 @@ if ($edit_target == "self") {
         header("Location: ?r=permission-denied");
         exit();
     }
-    if ($sno == "" || ($user_permission == -1 && $sno != $user_no && !queryIsSameDorByUserNo($sno, $target_no))) {
+    if ($sno == "" || ($user_permission == -1 && $sno != $user_no && !queryIsSameDorByUserNo($conn,$sno, $target_no))) {
         header("Location: ?r=permission-denied");
         exit();
 //        echo "<script>history.back()</script>";
@@ -55,44 +55,44 @@ if ($edit_target == "self") {
 
 // 查询 当前用户的所有信息
 $users_stu_current_query = "SELECT * FROM students WHERE s_no='$sno' ORDER BY s_id DESC";
-$users_stu_current_result = mysql_query($users_stu_current_query) or die ('SQL语句有误：' . mysql_error());
-$users_stu_current = mysql_fetch_array($users_stu_current_result);
+$users_stu_current_result = mysqli_query($conn,$users_stu_current_query) or die ('SQL语句有误：' . mysqli_error($conn));
+$users_stu_current = mysqli_fetch_array($users_stu_current_result);
 //echo "<script>alert('{$users_stu_current['s_no']}');</script>";
 
 // 查询 学生的所有信息
 $users_stu_query = "SELECT * FROM students WHERE s_no='$sno' ORDER BY s_id DESC";
-$users_stu_result = mysql_query($users_stu_query) or die ('SQL语句有误：' . mysql_error());
-$users_stu = mysql_fetch_array($users_stu_result);
+$users_stu_result = mysqli_query($conn,$users_stu_query) or die ('SQL语句有误：' . mysqli_error($conn));
+$users_stu = mysqli_fetch_array($users_stu_result);
 
 // 查询 当前学生名字
 $users_stu_current_name_query = "SELECT u_name FROM users WHERE u_no='{$users_stu_current['s_no']}' ORDER BY u_id DESC";
-$users_stu_current_name_result = mysql_query($users_stu_current_name_query) or die ('SQL语句有误：' . mysql_error());
-$users_stu_current_name_list = mysql_fetch_array($users_stu_current_name_result);
+$users_stu_current_name_result = mysqli_query($conn,$users_stu_current_name_query) or die ('SQL语句有误：' . mysqli_error($conn));
+$users_stu_current_name_list = mysqli_fetch_array($users_stu_current_name_result);
 
 // 查询 当前学生所在的宿舍楼名
 $user_stu_current_dor_build_query = "SELECT dormitory_builds.db_name, dormitory_builds.db_id FROM dormitories,dormitory_builds WHERE dormitories.d_id='{$users_stu_current['d_id']}' AND dormitories.db_id=dormitory_builds.db_id";
-$user_stu_current_dor_build_result = mysql_query($user_stu_current_dor_build_query) or die ('SQL语句有误：' . mysql_error());
-$user_stu_current_dor_build = mysql_fetch_array($user_stu_current_dor_build_result);
+$user_stu_current_dor_build_result = mysqli_query($conn,$user_stu_current_dor_build_query) or die ('SQL语句有误：' . mysqli_error($conn));
+$user_stu_current_dor_build = mysqli_fetch_array($user_stu_current_dor_build_result);
 // 查询 该楼的所有宿舍号
 $dor_build_select_name = $_GET['db_name_select'];
 $dor_build_select_id = "1";
 if (isset($dor_build_select_name)) {
-    $dor_build_select_id = queryDorBuildIdByName($dor_build_select_name);
+    $dor_build_select_id = queryDorBuildIdByName($conn,$dor_build_select_name);
     $dor_list_query = "SELECT d_name FROM dormitories WHERE db_id='$dor_build_select_id'";
 } else $dor_list_query = "SELECT d_name FROM dormitories WHERE db_id='{$user_stu_current_dor_build['db_id']}'";
 //$dor_list_query = "SELECT d_name FROM dormitories WHERE db_id='{$user_stu_current_dor_build['db_id']}'";
-$dor_list_result = mysql_query($dor_list_query) or die ('SQL语句有误：' . mysql_error());
-//$dor_list = mysql_fetch_array ($dor_list_result);
+$dor_list_result = mysqli_query($conn,$dor_list_query) or die ('SQL语句有误：' . mysqli_error($conn));
+//$dor_list = mysqli_fetch_array ($dor_list_result);
 // 查询 当前学生所在的宿舍号
 $users_stu_current_dor_query = "SELECT * FROM dormitories,dormitory_builds WHERE dormitories.d_id='{$users_stu_current['d_id']}' AND dormitories.db_id=dormitory_builds.db_id";
-$users_stu_current_dor_result = mysql_query($users_stu_current_dor_query) or die ('SQL语句有误：' . mysql_error());
-$users_stu_current_dor = mysql_fetch_array($users_stu_current_dor_result);
+$users_stu_current_dor_result = mysqli_query($conn,$users_stu_current_dor_query) or die ('SQL语句有误：' . mysqli_error($conn));
+$users_stu_current_dor = mysqli_fetch_array($users_stu_current_dor_result);
 //$users_stu_current_dor_name = $users_stu_current_dor_name['d_name'];
 
 // 查询 所有的宿舍楼名
 $users_all_dor_builds_query = "SELECT db_name FROM dormitory_builds ORDER BY db_id";
-$users_all_dor_builds_result = mysql_query($users_all_dor_builds_query) or die ('SQL语句有误：' . mysql_error());
-//$users_all_dor_builds = mysql_fetch_array($users_all_dor_builds_result);
+$users_all_dor_builds_result = mysqli_query($conn,$users_all_dor_builds_query) or die ('SQL语句有误：' . mysqli_error($conn));
+//$users_all_dor_builds = mysqli_fetch_array($users_all_dor_builds_result);
 
 
 /* 修改 信息 */
@@ -125,30 +125,30 @@ if ($save != "") {
             exit ();
         }
 
-        mysql_query("UPDATE users SET u_name='$u_name' WHERE u_no='$u_no'") or die ('SQL语句有误：' . mysql_error());;
-        mysql_query("UPDATE students SET s_sex='$stu_sex',s_age='$stu_age',s_department='$stu_department',s_grade='$stu_grade',s_phone='$stu_phone' WHERE s_no='$u_no'") or die ('SQL语句有误：' . mysql_error());;
+        mysqli_query($conn,"UPDATE users SET u_name='$u_name' WHERE u_no='$u_no'") or die ('SQL语句有误：' . mysqli_error($conn));;
+        mysqli_query($conn,"UPDATE students SET s_sex='$stu_sex',s_age='$stu_age',s_department='$stu_department',s_grade='$stu_grade',s_phone='$stu_phone' WHERE s_no='$u_no'") or die ('SQL语句有误：' . mysqli_error($conn));;
         echo "<script>alert('信息更新成功！');location.href='?r=user-stu&sno=$sno&edit_target=others'</script>";
     }
 
     // 超管 和 普管 可更换学生床位宿舍
     if ($user_permission != -1) {
-        $dor_details_now = mysql_fetch_array(mysql_query("SELECT d_id,d_stu_num_now,d_bed_num FROM dormitories WHERE d_name='$stu_dor' AND db_id='$stu_dor_build_id'"));//查询 目标宿舍楼该宿舍的id和床位数以及当前已入住人数
-        $result_bed_details_now = mysql_query("SELECT s_no FROM students WHERE s_bed='$stu_bed' AND d_id='{$dor_details_now['d_id']}'");// 查询 睡目标宿舍该床的同学的学号（判断是否已有人）
-        $bed_details_now = mysql_fetch_array($result_bed_details_now);
-        if (mysql_num_rows($result_bed_details_now) != 0) {// 若存在，即床已有人睡，则与学生间互换宿舍
-            mysql_query("UPDATE students SET s_bed='{$users_stu['s_bed']}',d_id='{$users_stu['d_id']}' WHERE s_no='{$bed_details_now['s_no']}'");//先把自己的位置换给目标
-            mysql_query("UPDATE students SET s_bed='$stu_bed',d_id='{$dor_details_now['d_id']}' WHERE s_no='{$users_stu['s_no']}'");//目标位置换给自己
+        $dor_details_now = mysqli_fetch_array(mysqli_query($conn,"SELECT d_id,d_stu_num_now,d_bed_num FROM dormitories WHERE d_name='$stu_dor' AND db_id='$stu_dor_build_id'"));//查询 目标宿舍楼该宿舍的id和床位数以及当前已入住人数
+        $result_bed_details_now = mysqli_query($conn,"SELECT s_no FROM students WHERE s_bed='$stu_bed' AND d_id='{$dor_details_now['d_id']}'");// 查询 睡目标宿舍该床的同学的学号（判断是否已有人）
+        $bed_details_now = mysqli_fetch_array($result_bed_details_now);
+        if (mysqli_num_rows($result_bed_details_now) != 0) {// 若存在，即床已有人睡，则与学生间互换宿舍
+            mysqli_query($conn,"UPDATE students SET s_bed='{$users_stu['s_bed']}',d_id='{$users_stu['d_id']}' WHERE s_no='{$bed_details_now['s_no']}'");//先把自己的位置换给目标
+            mysqli_query($conn,"UPDATE students SET s_bed='$stu_bed',d_id='{$dor_details_now['d_id']}' WHERE s_no='{$users_stu['s_no']}'");//目标位置换给自己
 
 //            echo "<script>alert('学号 {$users_stu['s_no']} 与 {$bed_details_now['s_no']} 已互换宿舍！');location.href='?r=user-stu&db={$user_stu_current_dor_build['db_name']}'</script>";
             echo "<script>alert('学号 {$users_stu['s_no']} 与 {$bed_details_now['s_no']} 已互换宿舍！');location.href='?r=user-stu&sno=$sno&edit_target=others'</script>";
             exit ();
         } else {
-            mysql_query("UPDATE students SET s_bed='$stu_bed',d_id='{$dor_details_now['d_id']}' WHERE s_no='{$users_stu['s_no']}'");
+            mysqli_query($conn,"UPDATE students SET s_bed='$stu_bed',d_id='{$dor_details_now['d_id']}' WHERE s_no='{$users_stu['s_no']}'");
             if ($stu_dor != $users_stu_current_dor ['d_name'] || $stu_dor_build_id != $users_stu_current_dor['db_id']) {
                 $num_now_temp = $users_stu_current_dor ['d_stu_num_now'] - 1;
-                mysql_query("UPDATE dormitories SET d_stu_num_now='$num_now_temp' WHERE d_id='{$users_stu['d_id']}'");
+                mysqli_query($conn,"UPDATE dormitories SET d_stu_num_now='$num_now_temp' WHERE d_id='{$users_stu['d_id']}'");
                 $num_now_temp = $dor_details_now ['d_stu_num_now'] + 1;
-                mysql_query("UPDATE dormitories SET d_stu_num_now='$num_now_temp' WHERE d_id='{$dor_details_now['d_id']}'");
+                mysqli_query($conn,"UPDATE dormitories SET d_stu_num_now='$num_now_temp' WHERE d_id='{$dor_details_now['d_id']}'");
             }
 
 //            echo "<script>alert('学号 {$users_stu['s_no']} 已更换宿舍与床位！');location.href='?r=dorstu&db={$studor['db_no']}'</script>";
@@ -159,7 +159,7 @@ if ($save != "") {
 
     // 学生更改密码
     if ($u_password != "" && $u_password_new != "" && $u_password_repeat != "") {
-        if (md5($u_password) != queryPasswordByUno($sno)) {
+        if (md5($u_password) != queryPasswordByUno($conn,$sno)) {
             echo "<script>alert('登录密码错误！请重新输入！');history.back()</script>";
             exit ();
         }
@@ -169,7 +169,7 @@ if ($save != "") {
         }
         if ($user_permission == -1) {
             $passMD5Temp = md5($u_password_new);
-            mysql_query("UPDATE users SET u_password='$passMD5Temp' WHERE u_no='$sno'");
+            mysqli_query($conn,"UPDATE users SET u_password='$passMD5Temp' WHERE u_no='$sno'");
 //            echo "<script>alert('密码更改成功！请重新登录！');location.href='?r=user-stu&sno=$sno'</script>";
             echo "<script>alert('密码更改成功！请重新登录！');location.href='?r=outlogin'</script>";
             exit ();
@@ -342,7 +342,7 @@ if ($save != "") {
                                     echo "<select name='user-dor-build' id='user-dor-build' onchange='request(this.id)'>";
                                 }
                                 // 把 所有宿舍楼 遍历到数组中，输出
-                                while ($dor_builds = mysql_fetch_array($users_all_dor_builds_result)) {
+                                while ($dor_builds = mysqli_fetch_array($users_all_dor_builds_result)) {
                                     if ($dor_builds['db_name'] == $user_stu_current_dor_build['db_name']) {
                                         echo "<option value='{$dor_builds['db_name']}' selected='selected'>{$dor_builds['db_name']}</option>";
                                     } else {
@@ -365,7 +365,7 @@ if ($save != "") {
                                     echo "<select name='user-dor'>";
                                 }
                                 // 把该宿舍楼的 所有宿舍号 遍历到数组中，输出
-                                while ($db_dor = mysql_fetch_array($dor_list_result)) {
+                                while ($db_dor = mysqli_fetch_array($dor_list_result)) {
                                     if ($db_dor['d_name'] == $users_stu_current_dor['d_name']) {
                                         echo "<option value='{$db_dor['d_name']}' selected='selected'>{$db_dor['d_name']}</option>";
                                     } else {

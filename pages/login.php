@@ -26,10 +26,10 @@ if ($_REQUEST['login']) {
     if ($u_no && $u_passowrd) {//如果用户名和密码都不为空
         $query = "SELECT * FROM users WHERE u_no = '$u_no' AND u_password='$u_passowrd'";//检测数据库是否有对应的username和password的sql
 //        $query = "SELECT u_no,u_password u_password FROM admin WHERE a_no='$admin_no'";
-        $result = mysql_query($query) or die ( 'SQL语句有误：' . mysql_error ());//执行sql
-        $rows = mysql_num_rows($result);//返回一个数值
+        $result = mysqli_query($conn,$query) or die ( 'SQL语句有误：' . mysqli_error ($conn));//执行sql
+        $rows = mysqli_num_rows($result);//返回一个数值
         //todo 要对rows做判断再执行下面
-        $users = mysql_fetch_array ( $result );
+        $users = mysqli_fetch_array ( $result );
         $user_permission = $users['u_permission'];
         if ($rows) {//0 false 1 true
             // 把当前登录的用户号存到cookie中
@@ -44,7 +44,7 @@ if ($_REQUEST['login']) {
     } else {//如果用户名或密码有空
         echo "<Script language=JavaScript>alert('表单填写不完整!');history.back();</Script>";
     }
-    mysql_close();//关闭数据库
+    mysqli_close();//关闭数据库
 } else if ($_REQUEST['forget']) {
 //    echo "Forget Password";
     echo "<Script language=JavaScript>alert('尚未开通此功能！请耐心等待！');history.back();</Script>";

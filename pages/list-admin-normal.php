@@ -29,8 +29,8 @@ $start_from = ($page - 1) * $num_rec_per_page;
 
 //分页查询普通管理员记录
 $normal_admin_query_page = "SELECT * FROM users WHERE u_permission=1 ORDER BY u_id LIMIT {$start_from}, {$num_rec_per_page}";// 检索记录行 $start_from - ($start_from+15)
-$normal_admin_result_page = mysql_query($normal_admin_query_page) or die ('SQL语句有误：' . mysql_error());
-$normal_admins_count_page = mysql_num_rows($normal_admin_result_page);
+$normal_admin_result_page = mysqli_query($conn,$normal_admin_query_page) or die ('SQL语句有误：' . mysqli_error($conn));
+$normal_admins_count_page = mysqli_num_rows($normal_admin_result_page);
 
 ?>
 
@@ -118,7 +118,7 @@ $normal_admins_count_page = mysql_num_rows($normal_admin_result_page);
                             <!--遍历普通管理员-->
                             <?php
                             // 结果集遍历到数组
-                            while ($normal_admins = mysql_fetch_array($normal_admin_result_page)) {
+                            while ($normal_admins = mysqli_fetch_array($normal_admin_result_page)) {
                                 ?>
                                 <tr>
                                     <td><input type="checkbox"/></td>

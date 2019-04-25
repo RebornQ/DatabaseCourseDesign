@@ -9,11 +9,11 @@ define ( 'DB_PWD', '***REMOVED***' );
 define ( 'DB_NAME', 'sql_bigwork' );
 
 // 第一步，连接MYSQL服务器
-$conn = mysql_connect ( DB_HOST, DB_USER, DB_PWD ) or die ( '连接MySQL服务器 失败！' . mysql_error () );
+$conn = mysqli_connect ( DB_HOST, DB_USER, DB_PWD ) or die ( '连接MySQL服务器 失败！' . mysqli_connect_error() );
 // 第二步，选择指定的数据库
-mysql_select_db ( DB_NAME ) or die ( '数据库错误，错误信息：' . mysql_error () );
+mysqli_select_db ( $conn,DB_NAME ) or die ( '数据库错误，错误信息：' . mysqli_error ($conn) );
 
 // 设置字符集
-mysql_query ( 'SET NAMES UTF8' ) or die ( '字符集设置错误' . mysql_error () );
+mysqli_query ( $conn,'SET NAMES UTF8' ) or die ( '字符集设置错误' . mysqli_error ($conn) );
 // 设置中国时区
 date_default_timezone_set ( 'PRC' ); 

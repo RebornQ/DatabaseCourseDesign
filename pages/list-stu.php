@@ -38,12 +38,12 @@ $keywords = $_GET['keywords'];
 if ($isSearch == 'true' && $keywords != "") {
     $stu_query_page = "SELECT students.*,users.u_name FROM students,users WHERE s_no=u_no AND u_permission=-1 AND (s_no LIKE '%$keywords%' OR u_name LIKE '%$keywords%') ORDER BY s_no LIMIT {$start_from}, {$num_rec_per_page}";
     // 查询所有搜索到的学生记录
-    $student_result_search = mysql_query("SELECT students.*,users.u_name FROM students,users WHERE s_no=u_no AND u_permission=-1 AND (s_no LIKE '%$keywords%' OR u_name LIKE '%$keywords%') ORDER BY s_no") or die ('SQL语句有误：' . mysql_error());
-    $students_count_search = mysql_num_rows($student_result_search);
+    $student_result_search = mysqli_query($conn,"SELECT students.*,users.u_name FROM students,users WHERE s_no=u_no AND u_permission=-1 AND (s_no LIKE '%$keywords%' OR u_name LIKE '%$keywords%') ORDER BY s_no") or die ('SQL语句有误：' . mysqli_error($conn));
+    $students_count_search = mysqli_num_rows($student_result_search);
 }
 
-$stu_result_page = mysql_query($stu_query_page) or die ('SQL语句有误：' . mysql_error());
-//$stu_count_page = mysql_num_rows($stu_result_page);
+$stu_result_page = mysqli_query($conn,$stu_query_page) or die ('SQL语句有误：' . mysqli_error($conn));
+//$stu_count_page = mysqli_num_rows($stu_result_page);
 ?>
 
 <!doctype html>
@@ -142,7 +142,7 @@ $stu_result_page = mysql_query($stu_query_page) or die ('SQL语句有误：' . m
                             <!--遍历学生-->
                             <?php
                             // 结果集遍历到数组
-                            while ($students = mysql_fetch_array($stu_result_page)) {
+                            while ($students = mysqli_fetch_array($stu_result_page)) {
                                 ?>
                                 <tr>
                                     <td><input type="checkbox"/></td>
@@ -162,12 +162,12 @@ $stu_result_page = mysql_query($stu_query_page) or die ('SQL语句有误：' . m
                                     <?php
                                     // 查询 当前学生所在的宿舍楼名
                                     $user_stu_current_dor_build_query = "SELECT dormitory_builds.db_name, dormitory_builds.db_id FROM dormitories,dormitory_builds WHERE dormitories.d_id='{$students['d_id']}' AND dormitories.db_id=dormitory_builds.db_id";
-                                    $user_stu_current_dor_build_result = mysql_query($user_stu_current_dor_build_query) or die ('SQL语句有误：' . mysql_error());
-                                    $user_stu_current_dor_build = mysql_fetch_array($user_stu_current_dor_build_result);
+                                    $user_stu_current_dor_build_result = mysqli_query($conn,$user_stu_current_dor_build_query) or die ('SQL语句有误：' . mysqli_error($conn));
+                                    $user_stu_current_dor_build = mysqli_fetch_array($user_stu_current_dor_build_result);
                                     // 查询 当前学生所在的宿舍号
                                     $users_stu_current_dor_query = "SELECT * FROM dormitories,dormitory_builds WHERE dormitories.d_id='{$students['d_id']}' AND dormitories.db_id=dormitory_builds.db_id";
-                                    $users_stu_current_dor_result = mysql_query($users_stu_current_dor_query) or die ('SQL语句有误：' . mysql_error());
-                                    $users_stu_current_dor = mysql_fetch_array($users_stu_current_dor_result);
+                                    $users_stu_current_dor_result = mysqli_query($conn,$users_stu_current_dor_query) or die ('SQL语句有误：' . mysqli_error($conn));
+                                    $users_stu_current_dor = mysqli_fetch_array($users_stu_current_dor_result);
                                     ?>
                                     <td>
                                         <span class="am-badge am-badge-secondary"><?php echo $user_stu_current_dor_build['db_name'] ?></span>

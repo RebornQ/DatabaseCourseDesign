@@ -19,7 +19,7 @@ require 'tools/tool_database.php';
 //}
 
 $db_id = $_GET["db_id"];
-$db_name = queryDorBuildNameById($db_id);
+$db_name = queryDorBuildNameById($conn,$db_id);
 
 //分页：http://www.runoob.com/w3cnote/php-mysql-pagination.html
 $num_rec_per_page = 10;   // 每页显示数量
@@ -32,18 +32,18 @@ $start_from = ($page - 1) * $num_rec_per_page;
 
 //// 分页查询宿舍记录
 //$dor_query_page = "SELECT dormitories.*, students.s_no, students.s_bed  FROM students, dormitories WHERE dormitories.db_id=$db_id AND students.d_id=dormitories.d_id ORDER BY d_id LIMIT {$start_from}, {$num_rec_per_page}";// 检索记录行 $start_from - ($start_from+15)
-//$dor_result_page = mysql_query($dor_query_page) or die ('SQL语句有误：' . mysql_error());
-//$dor_count_page = mysql_num_rows($dor_result_page);
+//$dor_result_page = mysqli_query($conn,$dor_query_page) or die ('SQL语句有误：' . mysqli_error($conn));
+//$dor_count_page = mysqli_num_rows($dor_result_page);
 
 // 分页只查询宿舍记录
 $dor_single_query_page = "SELECT * FROM dormitories WHERE db_id=$db_id ORDER BY d_name LIMIT {$start_from}, {$num_rec_per_page}";
-$dor_single_result_page = mysql_query($dor_single_query_page) or die ('SQL语句有误：' . mysql_error());
-$dor_single_count_page = mysql_num_rows($dor_single_result_page);
+$dor_single_result_page = mysqli_query($conn,$dor_single_query_page) or die ('SQL语句有误：' . mysqli_error($conn));
+$dor_single_count_page = mysqli_num_rows($dor_single_result_page);
 
 // 查询当前宿舍楼的所有宿舍记录
 $dor_query = "SELECT * FROM dormitories WHERE db_id=$db_id ORDER BY d_id";
-$dor_result = mysql_query($dor_query) or die ('SQL语句有误：' . mysql_error());
-$dor_count = mysql_num_rows($dor_result);
+$dor_result = mysqli_query($conn,$dor_query) or die ('SQL语句有误：' . mysqli_error($conn));
+$dor_count = mysqli_num_rows($dor_result);
 
 ?>
 
@@ -140,7 +140,7 @@ $dor_count = mysql_num_rows($dor_result);
                             <!--遍历宿舍-->
                             <?php
                             // 结果集遍历到数组
-                            while ($dormitories = mysql_fetch_array($dor_single_result_page)) {
+                            while ($dormitories = mysqli_fetch_array($dor_single_result_page)) {
                                 ?>
                                 <tr>
                                     <td><input type="checkbox"/></td>
@@ -153,14 +153,14 @@ $dor_count = mysql_num_rows($dor_result);
                                     // 根据宿舍id分页查询宿舍记录和学生信息
                                     // 只能order by s_bed,其他可能导致不按bed顺序的话会导致无法输出床号小的数据
                                     $dor_query_page = "SELECT dormitories.*, students.s_no, students.s_bed,students.d_id  FROM students, dormitories WHERE dormitories.db_id=$db_id AND students.d_id=dormitories.d_id  AND students.d_id={$dormitories['d_id']} ORDER BY students.s_bed LIMIT {$start_from}, {$num_rec_per_page}";
-                                    $dor_result_page = mysql_query($dor_query_page) or die ('SQL语句有误：' . mysql_error());
+                                    $dor_result_page = mysqli_query($conn,$dor_query_page) or die ('SQL语句有误：' . mysqli_error($conn));
 
                                     $i = 1;
                                     $isSameDor = false;
                                     while ($i <= 4) {
                                         if (!$isSameDor) {
-                                            $dormitories_d = mysql_fetch_array($dor_result_page);
-//                                            echo queryNameByUno($dormitories_d['s_no']);
+                                            $dormitories_d = mysqli_fetch_array($dor_result_page);
+//                                            echo queryNameByUno($conn,$dormitories_d['s_no']);
 //                                            echo $dormitories_d['d_name'];
 //                                            echo " {$dormitories_d['s_bed']}";
                                             $isSameDor = true;//此处必须加（异步思想），不然输出的结果显示有误
@@ -170,7 +170,7 @@ $dor_count = mysql_num_rows($dor_result);
                                             echo "<td align=\"center\"><a href=\"?r=user-stu&sno={$dormitories_d['s_no']}&edit_target=";
                                             if ($dormitories_d['s_no'] == $user_no) echo "self"; else if ($user_permission == -1) echo "others&tno=$user_no"; else echo "others";
                                             echo "\">";
-                                            echo queryNameByUno($dormitories_d['s_no']);
+                                            echo queryNameByUno($conn,$dormitories_d['s_no']);
                                             echo "</a></td>";
                                         } else echo "<td align=\"center\"></td>";
                                         $i++;
@@ -225,7 +225,7 @@ $dor_count = mysql_num_rows($dor_result);
                             </div>
                         </div>
                         <hr/>
-                        <p><a>注：该宿舍入住费为<?php echo queryDorBuildPriceById($db_id); ?>元/学期</a></p>
+                        <p><a>注：该宿舍入住费为<?php echo queryDorBuildPriceById($conn,$db_id); ?>元/学期</a></p>
                     </form>
                 </div>
 

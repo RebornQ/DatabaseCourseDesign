@@ -45,8 +45,8 @@ if ($edit_target == "self") {
 
 // 查询 当前用户的所有信息
 $users_current_query = "SELECT * FROM users WHERE u_no='$uno' ORDER BY u_id DESC";
-$users_current_result = mysql_query($users_current_query) or die ('SQL语句有误：' . mysql_error());
-$users_current = mysql_fetch_array($users_current_result);
+$users_current_result = mysqli_query($conn, $users_current_query) or die ('SQL语句有误：' . mysqli_error($conn));
+$users_current = mysqli_fetch_array($users_current_result);
 
 $an_save = $_POST['an_save'];
 $an_no = $_POST['admin-no-normal'];
@@ -64,13 +64,13 @@ if ($an_save != "") {
             exit ();
         }
 
-        mysql_query("UPDATE users SET u_name='$an_name' WHERE u_no='$an_no'") or die ('SQL语句有误：' . mysql_error());;
+        mysqli_query($conn, "UPDATE users SET u_name='$an_name' WHERE u_no='$an_no'") or die ('SQL语句有误：' . mysqli_error($conn));;
         echo "<script>alert('信息更新成功！');location.href='?r=user-admin-normal&uno=$uno&edit_target=$edit_target'</script>";
     }
 
     // 普管更改密码
     if ($an_password != "" && $an_password_new != "" && $an_password_repeat != "") {
-        if (md5($an_password) != queryPasswordByUno($uno)) {
+        if (md5($an_password) != queryPasswordByUno($conn,$uno)) {
             echo "<script>alert('登录密码错误！请重新输入！');history.back()</script>";
             exit ();
         }
@@ -80,7 +80,7 @@ if ($an_save != "") {
         }
         if ($user_permission == 1) {
             $passMD5Temp = md5($an_password_new);
-            mysql_query("UPDATE users SET u_password='$passMD5Temp' WHERE u_no='$uno'");
+            mysqli_query($conn,"UPDATE users SET u_password='$passMD5Temp' WHERE u_no='$uno'");
 //            echo "<script>alert('密码更改成功！请重新登录！');location.href='?r=user-admin-normal&uno=$uno'</script>";
             echo "<script>alert('密码更改成功！请重新登录！');location.href='?r=outlogin'</script>";
             exit ();

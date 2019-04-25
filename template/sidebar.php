@@ -8,28 +8,28 @@
 
 //查询超级管理员记录
 $super_admin_query = "SELECT * FROM users WHERE u_permission=0 ORDER BY u_id DESC";
-$super_admin_result = mysql_query($super_admin_query) or die ('SQL语句有误：' . mysql_error());
-$super_admins_count = mysql_num_rows($super_admin_result);
+$super_admin_result = mysqli_query($conn,$super_admin_query) or die ('SQL语句有误：' . mysqli_error($conn));
+$super_admins_count = mysqli_num_rows($super_admin_result);
 
 //查询普通管理员记录
 $normal_admin_query = "SELECT * FROM users WHERE u_permission=1 ORDER BY u_id DESC";
-$normal_admin_result = mysql_query($normal_admin_query) or die ('SQL语句有误：' . mysql_error());
-$normal_admins_count = mysql_num_rows($normal_admin_result);
+$normal_admin_result = mysqli_query($conn,$normal_admin_query) or die ('SQL语句有误：' . mysqli_error($conn));
+$normal_admins_count = mysqli_num_rows($normal_admin_result);
 
 // 查询所有学生记录
 $student_query = "SELECT * FROM users WHERE u_permission=-1 ORDER BY u_id DESC";
-$student_result = mysql_query($student_query) or die ('SQL语句有误：' . mysql_error());
-$students_count = mysql_num_rows($student_result);
+$student_result = mysqli_query($conn,$student_query) or die ('SQL语句有误：' . mysqli_error($conn));
+$students_count = mysqli_num_rows($student_result);
 
 //查询所有宿舍楼记录
 $dormitory_builds_query = "SELECT * FROM dormitory_builds ORDER BY db_id ";
-$dormitory_builds_result = mysql_query($dormitory_builds_query) or die ('SQL语句有误：' . mysql_error());
-$dormitory_builds_count = mysql_num_rows($dormitory_builds_result);
+$dormitory_builds_result = mysqli_query($conn,$dormitory_builds_query) or die ('SQL语句有误：' . mysqli_error($conn));
+$dormitory_builds_count = mysqli_num_rows($dormitory_builds_result);
 
 //查询所有宿舍记录
 $dormitories_query = "SELECT * FROM dormitories ORDER BY db_id ";
-$dormitories_result = mysql_query($dormitories_query) or die ('SQL语句有误：' . mysql_error());
-$dormitories_count = mysql_num_rows($dormitories_result);
+$dormitories_result = mysqli_query($conn,$dormitories_query) or die ('SQL语句有误：' . mysqli_error($conn));
+$dormitories_count = mysqli_num_rows($dormitories_result);
 
 ?>
 <div class="admin-sidebar am-offcanvas" id="admin-offcanvas">
@@ -71,7 +71,7 @@ $dormitories_count = mysql_num_rows($dormitories_result);
                 </ul>
             </li>
             <li <?php if ($user_permission != -1) echo 'style="display: none;"' ?>>
-                <a href="?r=list-dormitories&db_id=<?php $db = mysql_fetch_array(mysql_query("SELECT db_id FROM dormitories WHERE d_id=(SELECT d_id FROM students WHERE s_no=$user_no) ORDER BY d_id"));  echo $db['db_id']?>" class="am-cf"><span
+                <a href="?r=list-dormitories&db_id=<?php $db = mysqli_fetch_array(mysqli_query($conn,"SELECT db_id FROM dormitories WHERE d_id=(SELECT d_id FROM students WHERE s_no=$user_no) ORDER BY d_id"));  echo $db['db_id']?>" class="am-cf"><span
                             class="am-icon-file"></span> 我的宿舍<span
                             class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a>
             </li>
@@ -85,12 +85,12 @@ $dormitories_count = mysql_num_rows($dormitories_result);
                     <!--遍历宿舍楼-->
                     <?php
                     // 结果集遍历到数组
-                    while ($dormitory_builds = mysql_fetch_array($dormitory_builds_result)) {
+                    while ($dormitory_builds = mysqli_fetch_array($dormitory_builds_result)) {
                         ?>
                         <li><a href="?r=list-dormitories&db_id=<?php echo $dormitory_builds['db_id'] ?>"><span
                                         class="am-icon-table"></span> <?php echo $dormitory_builds['db_name'] ?>
                                 <span
-                                        class="am-badge am-badge-secondary am-margin-right am-fr">共<?php echo mysql_num_rows(mysql_query("SELECT dormitories.db_id FROM dormitories WHERE db_id={$dormitory_builds['db_id']} ORDER BY db_id ")) ?>
+                                        class="am-badge am-badge-secondary am-margin-right am-fr">共<?php echo mysqli_num_rows(mysqli_query($conn,"SELECT dormitories.db_id FROM dormitories WHERE db_id={$dormitory_builds['db_id']} ORDER BY db_id ")) ?>
                                     个宿舍</span></a>
                         </li>
                     <?php } ?>

@@ -21,12 +21,12 @@ if ($delete_no != "" && $isDelete == "true") {
         echo "<script>alert('权限不足！！');location.href='?r=$page_from';</script>";
         exit();
     }
-    $dor_num_now_id = queryDorStuNumNowAndIdByUserNo($delete_no);
+    $dor_num_now_id = queryDorStuNumNowAndIdByUserNo($conn,$delete_no);
     $dor_num_now = $dor_num_now_id['d_stu_num_now'] - 1;
-    mysql_query ( "UPDATE dormitories SET d_stu_num_now='$dor_num_now' WHERE d_id='{$dor_num_now_id['d_id']}'" ) or die ('SQL语句有误：' . mysql_error());
+    mysqli_query ( $conn,"UPDATE dormitories SET d_stu_num_now='$dor_num_now' WHERE d_id='{$dor_num_now_id['d_id']}'" ) or die ('SQL语句有误：' . mysqli_error($conn));
     $delete_query1 = "DELETE FROM students WHERE s_no='$delete_no'";
     $delete_query2 = "DELETE FROM users WHERE u_no='$delete_no'";
-    mysql_query($delete_query1) or die ('删除错误' . mysql_error());
-    mysql_query($delete_query2) or die ('删除错误' . mysql_error());
+    mysqli_query($conn,$delete_query1) or die ('删除错误' . mysqli_error($conn));
+    mysqli_query($conn,$delete_query2) or die ('删除错误' . mysqli_error($conn));
     echo "<script>alert('学号为 " . $delete_no . "的学生已删除');location.href='?r=$page_from';</script>";
 }
