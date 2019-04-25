@@ -107,7 +107,7 @@ function queryIsUserExistByNo($u_no){
     $stu_query = "SELECT s_no FROM students WHERE s_no='$u_no' ORDER BY s_id DESC";
     $stu_result = mysql_query($stu_query) or die ('SQL语句有误：' . mysql_error());
     $stu = mysql_fetch_array($stu_result);
-    if ($users['u_no'] != "" && $stu['s_no']) {
+    if ($users['u_no'] != "" && $stu['s_no'] != "") {
         return true;
     }else return false;
 }

@@ -24,6 +24,7 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
     <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
     <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
     <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="stylesheet" href="assets/css/app.css">
 </head>
 <body>
 <!--[if lte IE 9]>
@@ -63,7 +64,7 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
             </ul>
 
             <div class="am-g">
-                <div class="am-u-sm-12" <?php if ($user_permission == -1) echo 'style="display: none;"' ?>>
+                <div class="am-u-sm-12 table-container" <?php if ($user_permission == -1) echo 'style="display: none;"' ?>>
                     <table class="am-table am-table-bd am-table-striped admin-content-table">
                         <thead>
                         <tr>

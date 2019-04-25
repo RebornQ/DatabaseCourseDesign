@@ -337,7 +337,10 @@ $stu_result_page = mysql_query($stu_query_page) or die ('SQL语句有误：' . m
     }
 
     $(function () {
-        $("#bt_add_stu").click(function () {
+        // $("#bt_add_stu").click(function () {
+        //     window.location.href = '?r=user-stu-new&db_name_select=C1&from=stulist';
+        // });
+        $(document).on('touchend click','#bt_add_stu',function () {
             window.location.href = '?r=user-stu-new&db_name_select=C1&from=stulist';
         });
         $("#bt_del").click(function () {
@@ -348,10 +351,16 @@ $stu_result_page = mysql_query($stu_query_page) or die ('SQL语句有误：' . m
             // postCall('?r=list-stu&issearch=true', {keywords : keyword });
             window.location.href = '?r=list-stu&issearch=true&keywords=' + keyword;
         });
+        // $("#bt_search").on('tap',function () {
+        //     var keyword = $("#search-keywords").val();
+        //     // postCall('?r=list-stu&issearch=true', {keywords : keyword });
+        //     window.location.href = '?r=list-stu&issearch=true&keywords=' + keyword;
+        // });
         // jQuery回车键绑定点击事件：https://blog.csdn.net/ww122081351/article/details/17757213
         $(document).keydown(function (event) {
             if (event.keyCode === 13) {
                 $("#bt_search").click();
+                // $("#bt_search").on();
             }
         });
     });

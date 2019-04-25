@@ -96,12 +96,15 @@ $dor_count = mysql_num_rows($dor_result);
                 <div class="am-u-sm-12 am-u-md-6" <?php if ($user_permission == -1) echo 'style="display: none;"' ?>>
                     <div class="am-btn-toolbar">
                         <div class="am-btn-group am-btn-group-xs">
-                            <button id="bt_add_dor" type="button" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增宿舍
+                            <button id="bt_add_dor" type="button" class="am-btn am-btn-default"><span
+                                        class="am-icon-plus"></span> 新增宿舍
                             </button>
-                            <button id="bt_add_stu" type="button" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增学生
+                            <button id="bt_add_stu" type="button" class="am-btn am-btn-default"><span
+                                        class="am-icon-plus"></span> 新增学生
                             </button>
                             </button>
-                            <button id="bt_del" type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span>
+                            <button id="bt_del" type="button" class="am-btn am-btn-default"><span
+                                        class="am-icon-trash-o"></span>
                                 批量删除
                             </button>
                         </div>
@@ -148,7 +151,8 @@ $dor_count = mysql_num_rows($dor_result);
                                     <?php
 
                                     // 根据宿舍id分页查询宿舍记录和学生信息
-                                    $dor_query_page = "SELECT dormitories.*, students.s_no, students.s_bed,students.d_id  FROM students, dormitories WHERE dormitories.db_id=$db_id AND students.d_id=dormitories.d_id  AND students.d_id={$dormitories['d_id']} ORDER BY students.s_bed LIMIT {$start_from}, {$num_rec_per_page}";// 只能order by s_bed,其他可能导致不按bed顺序的话会导致无法输出床号小的数据
+                                    // 只能order by s_bed,其他可能导致不按bed顺序的话会导致无法输出床号小的数据
+                                    $dor_query_page = "SELECT dormitories.*, students.s_no, students.s_bed,students.d_id  FROM students, dormitories WHERE dormitories.db_id=$db_id AND students.d_id=dormitories.d_id  AND students.d_id={$dormitories['d_id']} ORDER BY students.s_bed LIMIT {$start_from}, {$num_rec_per_page}";
                                     $dor_result_page = mysql_query($dor_query_page) or die ('SQL语句有误：' . mysql_error());
 
                                     $i = 1;
@@ -159,12 +163,12 @@ $dor_count = mysql_num_rows($dor_result);
 //                                            echo queryNameByUno($dormitories_d['s_no']);
 //                                            echo $dormitories_d['d_name'];
 //                                            echo " {$dormitories_d['s_bed']}";
-                                            $isSameDor = true;
+                                            $isSameDor = true;//此处必须加（异步思想），不然输出的结果显示有误
                                         }
                                         if ($dormitories_d['s_bed'] == $i) {
                                             $isSameDor = false;
                                             echo "<td align=\"center\"><a href=\"?r=user-stu&sno={$dormitories_d['s_no']}&edit_target=";
-                                            if ($dormitories_d['s_no'] == $user_no) echo "self"; else if ($user_permission == -1) echo "others&tno=$user_no";else echo "others";
+                                            if ($dormitories_d['s_no'] == $user_no) echo "self"; else if ($user_permission == -1) echo "others&tno=$user_no"; else echo "others";
                                             echo "\">";
                                             echo queryNameByUno($dormitories_d['s_no']);
                                             echo "</a></td>";
@@ -254,15 +258,15 @@ $dor_count = mysql_num_rows($dor_result);
 <!--<![endif]-->
 <script type="text/javascript">
 
-    $(function(){
-        $("#bt_add_stu").click(function(){
-            window.location.href='?r=user-stu-new&db_name_select=<?php echo $db_name ?>&from=dorlist';
+    $(function () {
+        $("#bt_add_stu").click(function () {
+            window.location.href = '?r=user-stu-new&db_name_select=<?php echo $db_name ?>&from=dorlist';
         });
-        $("#bt_del").click(function(){
-            window.location.href='#';
+        $("#bt_del").click(function () {
+            window.location.href = '#';
         });
-        $("#bt_add_dor").click(function(){
-            window.location.href='?r=dor-new&db_name_select=<?php echo $db_name ?>&from=dorlist';
+        $("#bt_add_dor").click(function () {
+            window.location.href = '?r=dor-new&db_name_select=<?php echo $db_name ?>&from=dorlist';
         });
     });
 </script>
