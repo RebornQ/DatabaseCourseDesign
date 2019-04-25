@@ -29,8 +29,8 @@ $start_from = ($page - 1) * $num_rec_per_page;
 
 //分页查询超级管理员记录
 $super_admin_query_page = "SELECT * FROM users WHERE u_permission=0 ORDER BY u_id LIMIT {$start_from}, {$num_rec_per_page}";// 检索记录行 $start_from - ($start_from+15)
-$super_admin_result_page = mysql_query($super_admin_query_page) or die ('SQL语句有误：' . mysql_error());
-$super_admins_count_page = mysql_num_rows($super_admin_result_page);
+$super_admin_result_page = mysqli_query($conn,$super_admin_query_page) or die ('SQL语句有误：' . mysqli_error($conn));
+$super_admins_count_page = mysqli_num_rows($super_admin_result_page);
 
 ?>
 
@@ -118,7 +118,7 @@ $super_admins_count_page = mysql_num_rows($super_admin_result_page);
                             <!--遍历超级管理员-->
                             <?php
                             // 结果集遍历到数组
-                            while ($super_admins = mysql_fetch_array($super_admin_result_page)) {
+                            while ($super_admins = mysqli_fetch_array($super_admin_result_page)) {
                                 ?>
                                 <tr>
                                     <td><input type="checkbox"/></td>

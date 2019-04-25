@@ -4,7 +4,7 @@ require 'inc/checklogin.php';
 
 // 查询最新 15 条学生记录
 $query = "SELECT students.*,users.u_name FROM students,users WHERE s_no=u_no AND u_permission=-1 ORDER BY s_id DESC LIMIT 15";
-$result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () );
+$result = mysqli_query ( $conn, $query ) or die ( 'SQL语句有误：' . mysqli_error ($conn) );
 
 ?>
 
@@ -87,7 +87,7 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
                         <!--遍历学生-->
                         <?php
                         // 结果集遍历到数组
-                        while ( $students = mysql_fetch_array ( $result ) ) {
+                        while ( $students = mysqli_fetch_array ( $result ) ) {
                             ?>
                             <tr>
 <!--                                <td>--><?php //echo $students['s_id']?><!--</td>-->
@@ -101,12 +101,12 @@ $result = mysql_query ( $query ) or die ( 'SQL语句有误：' . mysql_error () 
                                 <?php
                                 // 查询 当前学生所在的宿舍楼名
                                 $user_stu_current_dor_build_query = "SELECT dormitory_builds.db_name, dormitory_builds.db_id FROM dormitories,dormitory_builds WHERE dormitories.d_id='{$students['d_id']}' AND dormitories.db_id=dormitory_builds.db_id";
-                                $user_stu_current_dor_build_result = mysql_query($user_stu_current_dor_build_query) or die ('SQL语句有误：' . mysql_error());
-                                $user_stu_current_dor_build = mysql_fetch_array($user_stu_current_dor_build_result);
+                                $user_stu_current_dor_build_result = mysqli_query($conn,$user_stu_current_dor_build_query) or die ('SQL语句有误：' . mysqli_error($conn));
+                                $user_stu_current_dor_build = mysqli_fetch_array($user_stu_current_dor_build_result);
                                 // 查询 当前学生所在的宿舍号
                                 $users_stu_current_dor_query = "SELECT * FROM dormitories,dormitory_builds WHERE dormitories.d_id='{$students['d_id']}' AND dormitories.db_id=dormitory_builds.db_id";
-                                $users_stu_current_dor_result = mysql_query($users_stu_current_dor_query) or die ('SQL语句有误：' . mysql_error());
-                                $users_stu_current_dor = mysql_fetch_array($users_stu_current_dor_result);
+                                $users_stu_current_dor_result = mysqli_query($conn,$users_stu_current_dor_query) or die ('SQL语句有误：' . mysqli_error($conn));
+                                $users_stu_current_dor = mysqli_fetch_array($users_stu_current_dor_result);
                                 ?>
                                 <td><span class="am-badge am-badge-secondary"><?php echo $user_stu_current_dor_build['db_name']?></span></td>
                                 <td><?php echo $users_stu_current_dor['d_name']?></td>

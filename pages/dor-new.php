@@ -27,24 +27,24 @@ if ($user_permission == -1) {
 $add = $_POST['add'];
 $stu_dor_build = $_GET['db_name_select'];//修复当from=dorlist时，select的disable属性为disabled导致的$stu_dor_build为空，使得添加数据失败
 $stu_dor = $_POST['user-dor-new'];
-$stu_dor_build_id = queryDorBuildIdByName($stu_dor_build);
+$stu_dor_build_id = queryDorBuildIdByName($conn,$stu_dor_build);
 
 // 查询 所有的宿舍楼名
 $users_all_dor_builds_query = "SELECT db_name FROM dormitory_builds ORDER BY db_id";
-$users_all_dor_builds_result = mysql_query($users_all_dor_builds_query) or die ('SQL语句有误：' . mysql_error());
-//$users_all_dor_builds = mysql_fetch_array($users_all_dor_builds_result);
+$users_all_dor_builds_result = mysqli_query($conn, $users_all_dor_builds_query) or die ('SQL语句有误：' . mysqli_error($conn));
+//$users_all_dor_builds = mysqli_fetch_array($users_all_dor_builds_result);
 $users_all_dor_build_query = "SELECT db_name,db_id FROM dormitory_builds ORDER BY db_id";
-$users_all_dor_build_result = mysql_query($users_all_dor_build_query) or die ('SQL语句有误：' . mysql_error());
-$users_all_dor_build = mysql_fetch_array($users_all_dor_build_result);
+$users_all_dor_build_result = mysqli_query($conn,$users_all_dor_build_query) or die ('SQL语句有误：' . mysqli_error($conn));
+$users_all_dor_build = mysqli_fetch_array($users_all_dor_build_result);
 
 // 查询 该楼的所有宿舍号
 $dor_build_select_name = $_GET['db_name_select'];
 $dor_build_select_id = "1";
 if (isset($dor_build_select_name)) {
-    $dor_build_select_id = queryDorBuildIdByName($dor_build_select_name);
+    $dor_build_select_id = queryDorBuildIdByName($conn,$dor_build_select_name);
     $dor_list_query = "SELECT d_name FROM dormitories WHERE db_id='$dor_build_select_id'";
 } else $dor_list_query = "SELECT d_name FROM dormitories WHERE db_id='{$users_all_dor_build['db_id']}'";
-$dor_list_result = mysql_query($dor_list_query) or die ('SQL语句有误：' . mysql_error());
+$dor_list_result = mysqli_query($conn,$dor_list_query) or die ('SQL语句有误：' . mysqli_error($conn));
 ?>
 
     <!doctype html>
@@ -154,7 +154,7 @@ $dor_list_result = mysql_query($dor_list_query) or die ('SQL语句有误：' . m
                                         echo "<select name='user-dor-build' id='user-dor-build' onchange='request(this.id)'>";
                                     }
                                     // 把 所有宿舍楼 遍历到数组中，输出
-                                    while ($dor_builds = mysql_fetch_array($users_all_dor_builds_result)) {
+                                    while ($dor_builds = mysqli_fetch_array($users_all_dor_builds_result)) {
                                         if ($dor_builds['db_name'] == 'C1') {
                                             echo "<option value='{$dor_builds['db_name']}' selected='selected'>{$dor_builds['db_name']}</option>";
                                         } else {
@@ -177,7 +177,7 @@ $dor_list_result = mysql_query($dor_list_query) or die ('SQL语句有误：' . m
                                         echo "<select name='user-dor-exist'>";
                                     }
                                     // 把该宿舍楼的 所有宿舍号 遍历到数组中，输出
-                                    while ($db_dor = mysql_fetch_array($dor_list_result)) {
+                                    while ($db_dor = mysqli_fetch_array($dor_list_result)) {
                                         if ($db_dor['d_name'] == '101') {
                                             echo "<option value='{$db_dor['d_name']}' selected='selected'>{$db_dor['d_name']}</option>";
                                         } else {
@@ -287,13 +287,13 @@ if ($add != "") {
             echo "<script>showErrorBox('宿舍 不能为空！');</script>";
             exit ();
         } else {
-            $isDorExist = queryIsDorExistByDorNameAndDorBuildId($stu_dor_build_id, $stu_dor);
+            $isDorExist = queryIsDorExistByDorNameAndDorBuildId($conn,$stu_dor_build_id, $stu_dor);
             if ($isDorExist) {
                 echo "<script>showErrorBox('宿舍已存在！');</script>";
                 exit ();
             }
         }
-        mysql_query("INSERT INTO dormitories (db_id, d_name, d_stu_num_now, d_bed_num) VALUES ($stu_dor_build_id, '$stu_dor', '0', '4')") or die ('SQL语句有误：' . mysql_error());
+        mysqli_query($conn,"INSERT INTO dormitories (db_id, d_name, d_stu_num_now, d_bed_num) VALUES ($stu_dor_build_id, '$stu_dor', '0', '4')") or die ('SQL语句有误：' . mysqli_error($conn));
         echo "<script>showInfoBox('宿舍  $stu_dor_build $stu_dor 已添加！', function() { location.href='?r=list-dormitories&db_id=$dor_build_select_id';});</script>";
         exit ();
     }

@@ -23,8 +23,8 @@ $permission_read = "readonly='$permission_read'";
 
 // 查询 当前用户的所有信息
 $users_current_query = "SELECT * FROM users WHERE u_no='$uno' ORDER BY u_id DESC";
-$users_current_result = mysql_query($users_current_query) or die ('SQL语句有误：' . mysql_error());
-$users_current = mysql_fetch_array($users_current_result);
+$users_current_result = mysqli_query($conn, $users_current_query) or die ('SQL语句有误：' . mysqli_error($conn));
+$users_current = mysqli_fetch_array($users_current_result);
 
 $as_save = $_POST['as_save'];
 $as_no = $_POST['admin-no-super'];
@@ -50,7 +50,7 @@ if ($as_save != "") {
     }
 
     if (!isset($as_password_changing) && $as_password_changing != 'Yes') {
-        mysql_query("UPDATE users SET u_name='$as_name' WHERE u_no='$as_no'") or die ('SQL语句有误：' . mysql_error());
+        mysqli_query($conn,"UPDATE users SET u_name='$as_name' WHERE u_no='$as_no'") or die ('SQL语句有误：' . mysqli_error($conn));
         echo "<script>alert('信息更新成功！');location.href='?r=user-admin-super&uno=$uno'</script>";
 //    echo "<script>alert('信息更新成功！');</script>";
     } else {
@@ -60,7 +60,7 @@ if ($as_save != "") {
             echo "<script>alert('密码不能为空！请重新输入密码！');history.back()</script>";
             exit ();
         } else {
-            if (md5($as_password) != queryPasswordByUno($uno)) {
+            if (md5($as_password) != queryPasswordByUno($conn,$uno)) {
                 echo "<script>alert('登录密码错误！请重新输入！');history.back()</script>";
                 exit ();
             }
@@ -69,8 +69,8 @@ if ($as_save != "") {
                 exit ();
             }
             $passMD5Temp = md5($as_password_new);
-            mysql_query("UPDATE users SET u_name='$as_name' WHERE u_no='$as_no'") or die ('SQL语句有误：' . mysql_error());
-            mysql_query("UPDATE users SET u_password='$passMD5Temp' WHERE u_no='$uno'");
+            mysqli_query($conn,"UPDATE users SET u_name='$as_name' WHERE u_no='$as_no'") or die ('SQL语句有误：' . mysqli_error($conn));
+            mysqli_query($conn,"UPDATE users SET u_password='$passMD5Temp' WHERE u_no='$uno'");
 //            echo "<script>alert('密码更改成功！请重新登录！');location.href='?r=user-admin-super&uno=$uno'</script>";
             echo "<script>alert('密码已更改！请重新登录！');location.href='?r=outlogin'</script>";
             exit ();
